@@ -20,21 +20,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      - uses: actions/checkout@v4
 
-    - name: Build Spring Boot modules
-      run:
-          cd water-quality-prediction
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build Spring Boot modules
+        run: |
+          cd app/water-quality-prediction
           mvn clean install -DskipTests
-          
+
           cd ../chlorine-consumption
           mvn clean install -DskipTests
 
@@ -44,38 +43,39 @@ jobs:
           cd ../sensor-management
           mvn clean install -DskipTests
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker images for water-quality-prediction
-      uses: docker/build-push-action@v4
-      with:
-          context: ./water-quality-prediction
+      - name: Build and push Docker images for water-quality-prediction
+        uses: docker/build-push-action@v4
+        with:
+          context: app/water-quality-prediction
           tags: kaveeshait21258794/24-25j-030-wq-server:prediction
 
-    - name: Build and push Docker images for chlorine-consumption
-      uses: docker/build-push-action@v4
-      with:
-          context: ./chlorine-consumption
+      - name: Build and push Docker images for chlorine-consumption
+        uses: docker/build-push-action@v4
+        with:
+          context: app/chlorine-consumption
           tags: kaveeshait21258794/24-25j-030-wq-server:chlorine
 
-    - name: Build and push Docker images for flow-customization
-      uses: docker/build-push-action@v4
-      with:
-          context: ./flow-customization
+      - name: Build and push Docker images for flow-customization
+        uses: docker/build-push-action@v4
+        with:
+          context: app/flow-customization
           tags: kaveeshait21258794/24-25j-030-wq-server:flow
 
-    - name: Build and push Docker images for sensor-management
-      uses: docker/build-push-action@v4
-      with:
-          context: ./sensor-management
+      - name: Build and push Docker images for sensor-management
+        uses: docker/build-push-action@v4
+        with:
+          context: app/sensor-management
           tags: kaveeshait21258794/24-25j-030-wq-server:sensor
 
       # - name: Build and push Docker images for model-service
       #   uses: docker/build-push-action@v4
       #   with:
-      #     context: ./model-service
+      #     context: app/model-service
       #     tags: kaveeshait21258794/24-25j-030-wq-server:model-service
+
