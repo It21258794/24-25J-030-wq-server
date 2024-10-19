@@ -54,24 +54,28 @@ jobs:
         with:
           context: app/water-quality-prediction
           tags: kaveeshait21258794/24-25j-030-wq-server:prediction
+          push: true
 
       - name: Build and push Docker images for chlorine-consumption
         uses: docker/build-push-action@v4
         with:
           context: app/chlorine-consumption
           tags: kaveeshait21258794/24-25j-030-wq-server:chlorine
+          push: true
 
       - name: Build and push Docker images for flow-customization
         uses: docker/build-push-action@v4
         with:
           context: app/flow-customization
           tags: kaveeshait21258794/24-25j-030-wq-server:flow
+          push: true
 
       - name: Build and push Docker images for sensor-management
         uses: docker/build-push-action@v4
         with:
           context: app/sensor-management
           tags: kaveeshait21258794/24-25j-030-wq-server:sensor
+          push: true
 
       # - name: Build and push Docker images for model-service
       #   uses: docker/build-push-action@v4
