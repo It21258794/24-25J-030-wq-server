@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <java.version>17</java.version> <!-- Specify your desired Java version here -->
+        <java.version>17</java.version>
     </properties>
 
     <modules>

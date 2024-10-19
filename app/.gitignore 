@@ -25,3 +25,5 @@ logs/
 *.temp
 # Environmental variables
 .env
+*.properties
+application.yml
