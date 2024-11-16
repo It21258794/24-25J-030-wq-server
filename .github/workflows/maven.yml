@@ -43,6 +43,9 @@ jobs:
           cd ../sensor-management
           mvn clean install -DskipTests
 
+          cd ../notification-system
+          mvn clean install -DskipTests
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -75,6 +78,13 @@ jobs:
         with:
           context: app/sensor-management
           tags: kaveeshait21258794/24-25j-030-wq-server:sensor
+          push: true
+
+      - name: Build and push Docker images for notification-system
+        uses: docker/build-push-action@v4
+        with:
+          context: app/notification-system
+          tags: kaveeshait21258794/24-25j-030-wq-server:notification
           push: true
 
       # - name: Build and push Docker images for model-service
