@@ -17,6 +17,7 @@
         <module>chlorine-consumption</module>
         <module>flow-customization</module>
         <module>sensor-management</module>
+        <module>notification-system</module>
     </modules>
 
     <dependencyManagement>
