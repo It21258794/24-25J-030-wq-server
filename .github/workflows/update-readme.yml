@@ -32,7 +32,11 @@ jobs:
           git checkout -b update-readme-pr-${{ github.event.pull_request.number }}
           git add README.md
           git commit -m "Update README with PR #${{ github.event.pull_request.number }}"
-          git push https://${{ secrets.USER_TOKEN }}@github.com/${{ github.repository }} HEAD:update-readme-pr-${{ github.event.pull_request.number }}
+
+          # Log presence of the token (but NOT the actual value)
+          echo "USER_TOKEN is set: ${{ secrets.USER_TOKEN != '' }}"
+          
+          git push https://${{ secrets.USER_TOKEN }}@github.com/${{ github.repository }} main:update-readme-pr-${{ github.event.pull_request.number }}
 
       # Step 5: Create a Pull Request for review
       - name: Create a Pull Request
