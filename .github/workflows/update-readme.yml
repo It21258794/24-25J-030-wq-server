@@ -58,9 +58,10 @@ jobs:
             Please review and merge this PR to keep the README up to date.
           labels: documentation
 
-      - name: Merge Pull Request
+      - name: Merge Pull Request using GitHub API
         if: success()  # Merge the PR after it is created
-        uses: peter-evans/enable-pull-request-merge@v2
+        uses: octokit/request-action@v2
         with:
+          route: PUT /repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/merge
+          merge_method: merge
           token: ${{ secrets.USER_TOKEN }}
-          pull_request_number: ${{ github.event.pull_request.number }}
