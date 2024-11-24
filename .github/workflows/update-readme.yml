@@ -57,3 +57,10 @@ jobs:
 
             Please review and merge this PR to keep the README up to date.
           labels: documentation
+
+      - name: Merge Pull Request
+        if: success()  # Merge the PR after it is created
+        uses: peter-evans/enable-pull-request-merge@v2
+        with:
+          token: ${{ secrets.USER_TOKEN }}
+          pull_request_number: ${{ github.event.pull_request.number }}
