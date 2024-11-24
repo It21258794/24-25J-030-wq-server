@@ -23,11 +23,30 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit and push changes to base branch
+      - name: Commit and push changes to a new branch
         run: |
-          # Commit the changes to README.md
+          # Create a new branch based on the main branch
+          git checkout -b update-readme-pr-${{ github.event.pull_request.number }}
+
+          # Stage and commit changes
           git add README.md
           git commit -m "Update README with PR #${{ github.event.pull_request.number }}"
 
-          # Push the changes directly to the base branch (e.g., 'main')
-          git push origin HEAD:${{ github.event.pull_request.base.ref }}
+          # Push changes to a new branch
+          git push https://${{ secrets.USER_TOKEN }}@github.com/${{ github.repository }} HEAD:update-readme-pr-${{ github.event.pull_request.number }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.USER_TOKEN }}
+          branch: update-readme-pr-${{ github.event.pull_request.number }}
+          title: "Update README with PR #${{ github.event.pull_request.number }}"
+          body: |
+            This PR updates the README with details of the recently merged pull request.
+
+            - **PR Title:** ${{ github.event.pull_request.title }}
+            - **PR Link:** [#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})
+            - **Description:** ${{ github.event.pull_request.body }}
+
+            Please review and merge this PR to keep the README up to date.
+          labels: documentation
