@@ -37,7 +37,7 @@ jobs:
       - name: Create a Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.USER_TOKEN }}
           branch: update-readme-pr-${{ github.event.pull_request.number }}
           title: "Update README with PR #${{ github.event.pull_request.number }}"
           body: |
