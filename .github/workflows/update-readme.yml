@@ -14,18 +14,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Update README with merged PR details
+      # Step 2: Update README with merged PR details, including the description
       - name: Update README with merged PR
         run: |
           echo "- **[#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})**: ${{ github.event.pull_request.title }}" >> README.md
+          echo "  - Description: ${{ github.event.pull_request.body }}" >> README.md
 
-      # Step 3: Configure Git
+      # Step 3: Commit and push changes (create new branch and PR for review)
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      # Step 4: Create a new branch and push changes
       - name: Create and Push Changes to a New Branch
         run: |
           git checkout -b update-readme-pr-${{ github.event.pull_request.number }}
@@ -33,7 +33,7 @@ jobs:
           git commit -m "Update README with PR #${{ github.event.pull_request.number }}"
           git push origin update-readme-pr-${{ github.event.pull_request.number }}
 
-      # Step 5: Create a Pull Request
+      # Step 4: Create a Pull Request for review
       - name: Create a Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -45,6 +45,7 @@ jobs:
 
             - **PR Title:** ${{ github.event.pull_request.title }}
             - **PR Link:** [#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})
+            - **Description:** ${{ github.event.pull_request.body }}
 
             Please review and merge this PR to keep the README up to date.
           labels: documentation
