@@ -18,10 +18,12 @@ jobs:
           echo "- **[#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})**: ${{ github.event.pull_request.title }}" >> README.md
           echo "  - Description: ${{ github.event.pull_request.body }}" >> README.md
 
-      - name: Configure Git for committing
+      - name: Set up Git credentials
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://github.com/${{ github.repository }}
+          git config --global credential.helper store
 
       - name: Commit and push changes to a new branch
         run: |
