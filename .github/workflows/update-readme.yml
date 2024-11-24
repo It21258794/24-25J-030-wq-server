@@ -23,13 +23,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Create commit and push changes
+      - name: Commit and push changes to base branch
         run: |
-          git commit -m "Update README with PR #${{ github.event.pull_request.number }}" -b update-readme-pr-${{ github.event.pull_request.number }}
-          git push origin HEAD:update-readme-pr-${{ github.event.pull_request.number }}
+          # Commit the changes to README.md
+          git add README.md
+          git commit -m "Update README with PR #${{ github.event.pull_request.number }}"
 
-# Alternative approach (direct push, requires protected branch configuration)
-# - name: Create commit and push changes (direct push)
-#   run: |
-#     git commit -m "Update README with PR #${{ github.event.pull_request.number }}" ${{ github.event.pull_request.base.ref }}
-#     git push origin ${{ github.event.pull_request.base.ref }}
+          # Push the changes directly to the base branch (e.g., 'main')
+          git push origin HEAD:${{ github.event.pull_request.base.ref }}
