@@ -1,0 +1,50 @@
+name: Update README with Merged PRs
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Update README with merged PR details
+      - name: Update README with merged PR
+        run: |
+          echo "- **[#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})**: ${{ github.event.pull_request.title }}" >> README.md
+
+      # Step 3: Configure Git
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # Step 4: Create a new branch and push changes
+      - name: Create and Push Changes to a New Branch
+        run: |
+          git checkout -b update-readme-pr-${{ github.event.pull_request.number }}
+          git add README.md
+          git commit -m "Update README with PR #${{ github.event.pull_request.number }}"
+          git push origin update-readme-pr-${{ github.event.pull_request.number }}
+
+      # Step 5: Create a Pull Request
+      - name: Create a Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: update-readme-pr-${{ github.event.pull_request.number }}
+          title: "Update README with PR #${{ github.event.pull_request.number }}"
+          body: |
+            This PR updates the README with details of the recently merged pull request:
+
+            - **PR Title:** ${{ github.event.pull_request.title }}
+            - **PR Link:** [#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})
+
+            Please review and merge this PR to keep the README up to date.
+          labels: documentation
