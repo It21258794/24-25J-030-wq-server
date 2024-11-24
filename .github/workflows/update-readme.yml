@@ -34,15 +34,15 @@ jobs:
           git commit -m "Update README with PR #${{ github.event.pull_request.number }}"
 
           # Log presence of the token (but NOT the actual value)
-          echo "secrets.GITHUB_TOKEN is set: ${{ secrets.GITHUB_TOKEN != '' }}"
+          echo "secrets.USER_TOKEN is set: ${{ secrets.GITHUB_TOKEN != '' }}"
           
-          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} main:update-readme-pr-${{ github.event.pull_request.number }}
+          git push https://${{ secrets.USER_TOKEN }}@github.com/${{ github.repository }} HEAD:update-readme-pr-${{ github.event.pull_request.number }}
 
       # Step 5: Create a Pull Request for review
       - name: Create a Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.USER_TOKEN }}
           branch: update-readme-pr-${{ github.event.pull_request.number }}
           title: "Update README with PR #${{ github.event.pull_request.number }}"
           body: |
