@@ -4,7 +4,7 @@ This repository contains the backend implementation of the Water Quality Predict
 
 
 ## Features
-+ The backend system includes the following key features:
+The backend system includes the following key features:
 
 ### 1. User Management:
 
@@ -35,7 +35,7 @@ This repository contains the backend implementation of the Water Quality Predict
 + Data ingestion and processing pipelines.
 
 
-### Chemical Consumption Prediction Model:
+### 6. Chemical Consumption Prediction Model:
 
 + Predictive analysis for estimating chemical requirements for water treatment.
 
@@ -78,6 +78,7 @@ cd <repo-name>
 ### 2. Set up MySQL Database:
 
 Create a database named water_quality.
+
 Run the SQL scripts located in /db-scripts to set up the schema and initial data.
 
 ### 3. Install Python Dependencies:
