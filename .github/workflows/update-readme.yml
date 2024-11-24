@@ -10,47 +10,26 @@ jobs:
     if: github.event.pull_request.merged == true
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Update README with merged PR details
       - name: Update README with merged PR
         run: |
           echo "- **[#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})**: ${{ github.event.pull_request.title }}" >> README.md
           echo "  - Description: ${{ github.event.pull_request.body }}" >> README.md
 
-      # Step 3: Configure Git for committing
       - name: Configure Git for committing
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      # Step 4: Create and Push Changes to a New Branch
-      - name: Create and Push Changes to a New Branch
+      - name: Create commit and push changes
         run: |
-          git checkout -b update-readme-pr-${{ github.event.pull_request.number }}
-          git add README.md
-          git commit -m "Update README with PR #${{ github.event.pull_request.number }}"
+          git commit -m "Update README with PR #${{ github.event.pull_request.number }}" -b update-readme-pr-${{ github.event.pull_request.number }}
+          git push origin HEAD:update-readme-pr-${{ github.event.pull_request.number }}
 
-          # Log presence of the token (but NOT the actual value)
-          echo "secrets.USER_TOKEN is set: ${{ secrets.GITHUB_TOKEN != '' }}"
-          
-          git push https://${{ secrets.USER_TOKEN }}@github.com/${{ github.repository }} HEAD:update-readme-pr-${{ github.event.pull_request.number }}
-
-      # Step 5: Create a Pull Request for review
-      - name: Create a Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.USER_TOKEN }}
-          branch: update-readme-pr-${{ github.event.pull_request.number }}
-          title: "Update README with PR #${{ github.event.pull_request.number }}"
-          body: |
-            This PR updates the README with details of the recently merged pull request:
-
-            - **PR Title:** ${{ github.event.pull_request.title }}
-            - **PR Link:** [#${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})
-            - **Description:** ${{ github.event.pull_request.body }}
-
-            Please review and merge this PR to keep the README up to date.
-          labels: documentation
+# Alternative approach (direct push, requires protected branch configuration)
+# - name: Create commit and push changes (direct push)
+#   run: |
+#     git commit -m "Update README with PR #${{ github.event.pull_request.number }}" ${{ github.event.pull_request.base.ref }}
+#     git push origin ${{ github.event.pull_request.base.ref }}
