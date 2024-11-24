@@ -27,20 +27,23 @@ jobs:
 
       - name: Commit and push changes to a new branch
         run: |
-          # Create a new branch based on the main branch
+          # Create a new branch based on main
+          git checkout main
+          git pull origin main
           git checkout -b update-readme-pr-${{ github.event.pull_request.number }}
 
           # Stage and commit changes
           git add README.md
           git commit -m "Update README with PR #${{ github.event.pull_request.number }}"
 
-          # Push changes to a new branch
+          # Push changes to the new branch
           git push https://${{ secrets.USER_TOKEN }}@github.com/${{ github.repository }} HEAD:update-readme-pr-${{ github.event.pull_request.number }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.USER_TOKEN }}
+          base: main  # Set the base branch to 'main'
           branch: update-readme-pr-${{ github.event.pull_request.number }}
           title: "Update README with PR #${{ github.event.pull_request.number }}"
           body: |
