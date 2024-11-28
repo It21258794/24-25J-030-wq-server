@@ -100,3 +100,24 @@ Update the application.properties file in /config with your database credentials
 mvn clean install
 mvn spring-boot:run 
 ```
+
+## Pull Requests
+
+> [!TIP]
+>https://github.com/It21258794/24-25J-030-wq-server/pull/1
+> 
+>feat(notification):notification module implemented with mail and sms services using smtp, twllio - 17 November 2024 at 00:28:16 GMT+5:30
+> 
+>- For emil used smpt and created gmail to send notification via email
+>- used twilio to send sms alerts for now free version of twilio used
+>- two end point created for each altering services
+
+> [!TIP]
+>https://github.com/It21258794/24-25J-030-wq-server/pull/17
+> 
+>feat: added initial LSTM module for water-quality-module - 28 November 2024 at 22:23:12 GMT+5:30
+>
+>- trained a LSTM model for water quality prediction for a one centre
+>- change the folder structure little bit for multi modular architecture
+>- change the docker file for main application instead having separate file for each module
+
