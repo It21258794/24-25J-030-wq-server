@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="chlorine-consumption" />
+        <module name="main-applicationm" />
         <module name="water-quality-prediction" />
         <module name="notification-system" />
         <module name="flow-customization" />
