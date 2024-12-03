@@ -2,6 +2,11 @@
 
 This repository contains the backend implementation of the Water Quality Prediction and Management System, a collaborative project developed as part of the 4th-year university project in partnership with the Sri Lanka Water Board and JRDC. This backend serves as the backbone for user management, notifications, predictive modeling, sensor management, and system customization.
 
+## Architecture diagram
+
+![wq-architecture](https://github.com/user-attachments/assets/5312f2c2-bf94-4422-b6da-4f80c98c3614)
+
+
 
 ## Features
 The backend system includes the following key features:
@@ -127,4 +132,18 @@ mvn spring-boot:run
 > feat: added model for daily chemical prediction
 >
 >- Implemented a model to predict daily chemical consumption
+>
+
+> [!TIP]
+>https://github.com/It21258794/24-25J-030-wq-server/pull/21
+> 
+> feat(water-quality-prediction):initial gnn model training and prediction part
+>
+>- trained a gnn model to use previous lstm model for each node as centres to get better prediction
+>- implemented a prediction model but need water board data to evaluate predictions
+>- trained gnn model saved for use in future
+>
+> fix(notification system): updated sample email template using a simple layout
+
+
 
