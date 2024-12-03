@@ -145,5 +145,10 @@ mvn spring-boot:run
 >
 > fix(notification system): updated sample email template using a simple layout
 
+> [!TIP]
+> https://github.com/It21258794/24-25J-030-wq-server/pull/22
+>
+> fix(water-quality-prediction): separated file code for gnn model and gnn predict
+
 
 
