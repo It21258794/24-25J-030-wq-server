@@ -121,3 +121,10 @@ mvn spring-boot:run
 >- change the folder structure little bit for multi modular architecture
 >- change the docker file for main application instead having separate file for each module
 
+> [!TIP]
+> https://github.com/It21258794/24-25J-030-wq-server/pull/20
+>
+> feat: added model for daily chemical prediction
+>
+>- Implemented a model to predict daily chemical consumption
+
