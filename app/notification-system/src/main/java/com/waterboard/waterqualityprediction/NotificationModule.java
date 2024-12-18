@@ -1,7 +1,5 @@
 package com.waterboard.waterqualityprediction;
 
-import com.waterboard.waterqualityprediction.common.CheckExternalApi;
-import com.waterboard.waterqualityprediction.common.JSON;
 import com.waterboard.waterqualityprediction.dto.MailDto;
 import com.waterboard.waterqualityprediction.dto.MessageDto;
 import com.waterboard.waterqualityprediction.models.Mail;
@@ -12,13 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-
 @Component
 @Slf4j
 public class NotificationModule {
 
     public static final String EMAIL_QUEUE = "com.water.quality.queue.email";
+    public static final String SMS_QUEUE = "com.water.quality.queue.sms";
 
     @Autowired
     NotificationModuleConfigs notificationModuleConfigs;
@@ -83,5 +80,10 @@ public class NotificationModule {
         messageService = notificationMessageFactory.getMessageService(message.getPhoneNumber());
         MessageDto messageDto = messageService.sendMessage(message);
         return messageDto;
+    }
+
+    public void sendSmsAsync(SMSMessage sms) {
+        log.info("sending queue async, to = {},  sms = {}", sms.getPhoneNumber(), sms.getMessage());
+        queueModule.sendMessage(SMS_QUEUE, JSON.objectToString(sms));
     }
 }

@@ -1,0 +1,26 @@
+{
+  "en" : {
+
+    "sms-templates" : {
+      "otp-password-reset" : "Your OTP for password reset in WQ system is ${code}. Please enter this code on the reset page to verify and update the password. Thank you!"
+    },
+    "email-contents" : {
+      "reset-password" : {
+        "subject" : "WQ Pred : Reset Your Password",
+        "body" : "We have received a request to reset your password.Please follow below link to reset your password."
+      }
+    },
+    "contact-information":{
+      "instagram":"https://www.instagram.com",
+      "facebook":"https://www.facebook.com",
+      "linkedin" : "https://www.linkedin.com",
+      "twitter" : "https://twitter.com",
+      "privacyPolicy" : "https://www.instagram.com",
+      "termsAndConditions" : "https://www.instagram.com",
+      "contactNumber" : "+251 11 668 6544",
+      "supportCenter" : "https://www.instagram.com",
+      "supportEmail" : "https://www.instagram.com"
+    }
+
+  }
+}

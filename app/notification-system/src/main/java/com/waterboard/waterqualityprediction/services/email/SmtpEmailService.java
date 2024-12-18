@@ -1,21 +1,22 @@
 package com.waterboard.waterqualityprediction.services.email;
 
+import com.waterboard.waterqualityprediction.JSON;
 import com.waterboard.waterqualityprediction.NotificationModuleConfigs;
-import com.waterboard.waterqualityprediction.common.JSON;
 import com.waterboard.waterqualityprediction.dto.MailDto;
-import com.waterboard.waterqualityprediction.exception.MailNotSendException;
+import com.waterboard.waterqualityprediction.exceptions.notification.MailNotSendException;
 import com.waterboard.waterqualityprediction.models.Mail;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
