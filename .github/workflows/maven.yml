@@ -27,7 +27,7 @@ jobs:
 
       # Step 3: Build the project with Maven from the app directory (parent POM)
       - name: Build the project with Maven
-        run: mvn dependency:resolve-plugins
+        run: mvn clean install -DskipTests
         working-directory: ./app  # Set working directory to 'app' where the parent POM is located
 
       # Step 4: Log in to Docker Hub using secrets
