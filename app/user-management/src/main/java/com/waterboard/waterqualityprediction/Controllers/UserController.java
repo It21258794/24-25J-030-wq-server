@@ -20,9 +20,6 @@ public class UserController {
     @Autowired
     private GlobalConfigs globalConfigs;
 
-    @Autowired
-    private CommonModuleConfig commonModuleConfig;
-
 
     @PostMapping("/login")
     public ResponseEntity<UserDto> userLogin(@RequestBody UserDto loginDetails) {
@@ -37,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/password-reset/otp")
-    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_EMAIL_OTP_REQUEST)
+//    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_EMAIL_OTP_REQUEST)
     public ResponseEntity sendResetPasswordEmailCode(@RequestBody UserDto emailDetails) {
         Result<User> result = this.userModule.sendUserResetPasswordRequestViaEmail(emailDetails.getEmail());
         return ResponseEntity
