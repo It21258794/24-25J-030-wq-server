@@ -1,7 +1,7 @@
 package com.waterboard.waterqualityprediction.filters;
 
-import com.waterboard.waterqualityprediction.exceptions.ExType;
-import com.waterboard.waterqualityprediction.exceptions.UnauthorizeException;
+import com.waterboard.waterqualityprediction.coreExceptions.ExType;
+import com.waterboard.waterqualityprediction.coreExceptions.UnauthorizeException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

@@ -1,7 +1,7 @@
-package com.waterboard.waterqualityprediction.exceptions.http;
+package com.waterboard.waterqualityprediction.coreExceptions.http;
 
-import com.waterboard.waterqualityprediction.exceptions.ExType;
-import com.waterboard.waterqualityprediction.exceptions.ExceptionType;
+import com.waterboard.waterqualityprediction.coreExceptions.ExType;
+import com.waterboard.waterqualityprediction.coreExceptions.ExceptionType;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;

@@ -12,7 +12,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class RequestDataHolder {
+public class RequestContextHolder {
 
     @Autowired
     private HttpServletRequest httpServletRequest;

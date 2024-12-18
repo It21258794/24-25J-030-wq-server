@@ -1,6 +1,6 @@
-package com.waterboard.waterqualityprediction.exceptions.user;
+package com.waterboard.waterqualityprediction.coreExceptions.user;
 
-import com.waterboard.waterqualityprediction.exceptions.http.BadRequestException;
+import com.waterboard.waterqualityprediction.coreExceptions.http.BadRequestException;
 
 public class InvalidInputException extends BadRequestException {
     public InvalidInputException(String message) {

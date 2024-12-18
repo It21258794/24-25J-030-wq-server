@@ -1,8 +1,8 @@
 package com.waterboard.waterqualityprediction.services;
 
 import com.waterboard.waterqualityprediction.*;
-import com.waterboard.waterqualityprediction.exceptions.UnauthorizeException;
-import com.waterboard.waterqualityprediction.exceptions.user.*;
+import com.waterboard.waterqualityprediction.coreExceptions.UnauthorizeException;
+import com.waterboard.waterqualityprediction.coreExceptions.user.*;
 import com.waterboard.waterqualityprediction.models.user.User;
 import com.waterboard.waterqualityprediction.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class UserService {
     private UserModuleConfigs userModuleConfigs;
 
     @Autowired
-    private GlobalConfigs globalConfigs;
+    private GlobalAppConfig globalAppConfig;
 
     public User save(User user){
         user.set_query("");
@@ -48,14 +48,14 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        log.info("create user = {}", JSON.objectToString(user));
+        log.info("create user = {}", JsonUtils.objectToString(user));
         if (StringUtils.isNotBlank(user.getEmail()) && this.getUserByEmail(user.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(ExType.EMAIL_ALREADY_EXISTS, "user already exists with email {}" + user.getEmail());
         }
         if (StringUtils.isNotBlank(user.getPhone()) && this.getUserByPhone(user.getPhone()).isPresent()) {
             throw new UserAlreadyExistsException(ExType.MOBILE_ALREADY_EXISTS, "user already exists with phone {} " + user.getPhone());
         }
-        if (user.getPassword() != null) user.setPassword(Hash.make(user.getPassword()));
+        if (user.getPassword() != null) user.setPassword(HashUtil.make(user.getPassword()));
         if (user.getStatus() != null) {
             user.setStatus(user.getStatus());
         } else {
@@ -96,7 +96,7 @@ public class UserService {
         }
         User user = userResult.get();
 
-        if (!Hash.match(loginDetails.getPassword(), user.getPassword())) {
+        if (!HashUtil.match(loginDetails.getPassword(), user.getPassword())) {
             String errorMessage = "login failed. email or password invalid";
             if (StringUtils.isNotEmpty(loginDetails.getPhone())) {
                 errorMessage = "login failed. phone number or password invalid";
@@ -126,7 +126,7 @@ public class UserService {
     }
 
     public String userToken(User user) {
-        JWTContent.JWTContentBuilder content = JWTContent.builder().subject(user.getId());
+        JWTContent.JWTContentBuilder content = JWTContent.builder().mainSubject(user.getId());
         if (user.getRole() != null){
             content.payload(Map.of("role", user.getRole()));
         }
@@ -144,26 +144,26 @@ public class UserService {
         }
         content.expiredIn(mills * userModuleConfigs.getTokenExpireTime());
 
-        return JWT.encode(content.build(), globalConfigs.getSecretKey());
+        return JwtUtil.encode(content.build(), globalAppConfig.getSecretKey());
     }
 
     public void  checkPasswordResetLimit(User user){
         if(userModuleConfigs.isBlockedResetLinkRequired() && user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_BLOCK_TIME) != null && user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_ATTEMPTS) != null){
 
-            LocalDateTime blockTime = DateHelper.fromMilliseconds(Long.parseLong(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_BLOCK_TIME).toString()));
-            LocalDateTime passwordResetTimePeriod = DateHelper.fromMilliseconds(Long.parseLong(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_TIME_PERIOD).toString()));
+            LocalDateTime blockTime = DateTimeUtils.fromMilliseconds(Long.parseLong(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_BLOCK_TIME).toString()));
+            LocalDateTime passwordResetTimePeriod = DateTimeUtils.fromMilliseconds(Long.parseLong(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_TIME_PERIOD).toString()));
 
-            if(DateHelper.now().isBefore(passwordResetTimePeriod)){
+            if(DateTimeUtils.now().isBefore(passwordResetTimePeriod)){
                 if(Integer.parseInt(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_ATTEMPTS).toString()) >= userModuleConfigs.getAllowedResetLinkSendAttempts()){
 
                     throw new UnauthorizeException(ExType.TOO_MANY_PASSWORD_RESET_REQUESTS, "too many password reset requests");
                 }
             }
             if(Integer.parseInt(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_ATTEMPTS).toString()) >= userModuleConfigs.getAllowedResetLinkSendAttempts()){
-                if(DateHelper.now().isBefore(blockTime)){
+                if(DateTimeUtils.now().isBefore(blockTime)){
                     throw  new UnauthorizeException(ExType.PASSWORD_RESET_LINK_SEND_BLOCK,"too many attempts,password reset block for 30 minutes");
                 }
-                if(DateHelper.now().isAfter(blockTime)){
+                if(DateTimeUtils.now().isAfter(blockTime)){
                     updateResetLinkSendCount(user,true);
                 }
 
@@ -177,14 +177,14 @@ public class UserService {
         if (reset) {
             requestCount = 0;
         } else {
-            long passwordResetTimePeriod = DateHelper.toMilliseconds(DateHelper.now().plusMinutes(userModuleConfigs.getPasswordResetTimePeriod()));
+            long passwordResetTimePeriod = DateTimeUtils.toMilliseconds(DateTimeUtils.now().plusMinutes(userModuleConfigs.getPasswordResetTimePeriod()));
             user.getMetaData().put(UserModuleExtraKeys.PASSWORD_RESET_TIME_PERIOD,passwordResetTimePeriod);
             requestCount = user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_ATTEMPTS) != null ? Integer.parseInt(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_ATTEMPTS).toString()) + 1 : 1;
             if (user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_BLOCK_TIME) != null &&
-                    DateHelper.now().isAfter(DateHelper.fromMilliseconds(Long.parseLong(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_BLOCK_TIME).toString())))) {
+                    DateTimeUtils.now().isAfter(DateTimeUtils.fromMilliseconds(Long.parseLong(user.getMetaData().get(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_BLOCK_TIME).toString())))) {
                 requestCount = 1;
             }
-            long blockTime = DateHelper.toMilliseconds(DateHelper.now().plusMinutes(userModuleConfigs.getResetLinkBlockTime()));
+            long blockTime = DateTimeUtils.toMilliseconds(DateTimeUtils.now().plusMinutes(userModuleConfigs.getResetLinkBlockTime()));
             user.getMetaData().put(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_BLOCK_TIME, String.valueOf(blockTime));
         }
         user.getMetaData().put(UserModuleExtraKeys.PASSWORD_RESET_LINK_SEND_ATTEMPTS, String.valueOf(requestCount));
@@ -201,13 +201,13 @@ public class UserService {
 
     public User getUserByPasswordResetRequestToken(String resetRequestToken, String action, String metaData) {
         log.info("create password reset token = {}", resetRequestToken);
-        JWTContent tokenData = JWT.decode(resetRequestToken, globalConfigs.getSecretKey());
+        JWTContent tokenData = JwtUtil.decode(resetRequestToken, globalAppConfig.getSecretKey());
         if (!tokenData.getPayload().getOrDefault(UserModuleExtraKeys.ACTION, "")
                 .equalsIgnoreCase(action)) {
             throw new InvalidInputException("Invalid token",ExType.INVALID_TOKEN);
         }
-        Optional<User> userResult = this.userRepository.findById(tokenData.getSubject());
-        Check.throwIfEmpty(userResult, new UserNotFoundException("user not found for id " + tokenData.getSubject()));
+        Optional<User> userResult = this.userRepository.findById(tokenData.getMainSubject());
+        Check.throwIfEmpty(userResult, new UserNotFoundException("user not found for id " + tokenData.getMainSubject()));
         String passwordResetTokenMetadata = tokenData.getPayload().get(metaData);
         Check.isTrue(passwordResetTokenMetadata.equals(userResult.get().getMetaData().get(metaData)), new InvalidInputException("Invalid token",ExType.INVALID_TOKEN));
         User user = userResult.get();
@@ -217,13 +217,13 @@ public class UserService {
 
     public User resetPassword(User userDetails, String resetToken) {
         log.info("reset password with token = {}", resetToken);
-        JWTContent tokenData = JWT.decode(resetToken, globalConfigs.getSecretKey());
+        JWTContent tokenData = JwtUtil.decode(resetToken, globalAppConfig.getSecretKey());
         if (!tokenData.getPayload().getOrDefault(UserModuleExtraKeys.ACTION, "")
                 .equalsIgnoreCase(UserModuleExtraKeys.RESET_PASSWORD)) {
             throw new InvalidInputException("invalid action = " + tokenData.getPayload().getOrDefault(UserModuleExtraKeys.ACTION, ""),ExType.INVALID_TOKEN);
         }
-        Optional<User> userResult = this.userRepository.findById(tokenData.getSubject());
-        Check.throwIfEmpty(userResult, new UserNotFoundException("user not found " + tokenData.getSubject()));
+        Optional<User> userResult = this.userRepository.findById(tokenData.getMainSubject());
+        Check.throwIfEmpty(userResult, new UserNotFoundException("user not found " + tokenData.getMainSubject()));
 
         String psw_reset_token_uuid = tokenData.getPayload().get(UserModuleExtraKeys.RESET_PASSWORD);
         if (!userResult.get().getMetaData().containsKey(UserModuleExtraKeys.RESET_PASSWORD)) {
@@ -235,7 +235,7 @@ public class UserService {
         User user = userResult.get();
         user.getMetaData().remove(UserModuleExtraKeys.RESET_PASSWORD);
         user.getMetaData().remove(UserModuleExtraKeys.EMAIL_TOKEN);
-        user.setPassword(Hash.make(userDetails.getPassword()));
+        user.setPassword(HashUtil.make(userDetails.getPassword()));
         return this.save(user);
     }
 

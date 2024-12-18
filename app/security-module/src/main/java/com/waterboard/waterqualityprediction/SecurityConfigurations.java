@@ -27,11 +27,11 @@ import java.util.List;
 public class SecurityConfigurations {
 
     @Autowired
-    RequestDataProvider requestDataProvider;
+    RequestContextManager requestContextManager;
     @Autowired
     UserService userService;
     @Autowired
-    GlobalConfigs globalConfigs;
+    GlobalAppConfig globalAppConfig;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,10 +53,10 @@ public class SecurityConfigurations {
                                 .accessDeniedHandler(new AccessDeniedExceptionHandler())
                 )
                 .addFilterBefore(new JWTSecurityFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
-                                userService, globalConfigs, requestDataProvider),
+                                userService, globalAppConfig, requestContextManager),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new ExceptionHandlerFilter(), JWTSecurityFilter.class)
-                .addFilterBefore(new LoggingFilter(requestDataProvider), ExceptionHandlerFilter.class);
+                .addFilterBefore(new LoggingFilter(requestContextManager), ExceptionHandlerFilter.class);
 
         return http.build();
     }

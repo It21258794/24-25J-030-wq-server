@@ -23,7 +23,7 @@ public class Check {
         }
     }
 
-    public static void throwIfEmpty(Result optional,  RuntimeException exception) {
+    public static void throwIfEmpty(ResultSet optional, RuntimeException exception) {
         if(optional.isEmpty() || optional.get() == null) {
             throw exception;
         }

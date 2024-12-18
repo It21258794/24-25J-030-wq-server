@@ -1,7 +1,7 @@
 package com.waterboard.waterqualityprediction.services;
 
-import com.waterboard.waterqualityprediction.AppResources;
-import com.waterboard.waterqualityprediction.Result;
+import com.waterboard.waterqualityprediction.ResourceLoader;
+import com.waterboard.waterqualityprediction.ResultSet;
 import com.waterboard.waterqualityprediction.UserModule;
 import com.waterboard.waterqualityprediction.models.user.User;
 import io.restassured.path.json.JsonPath;
@@ -22,9 +22,9 @@ public class AppInitializeService {
 
     public void createAdminUserIfNotExists() {
         log.info("create admin user if not exists");
-        JsonPath adminInfo = JsonPath.from(AppResources.asString("default/admin-info.json").get());
-        Result<User> exUserResult = this.userModule.getUserByEmail(adminInfo.getString("email"));
-        if (exUserResult.isPresent()) {
+        JsonPath adminInfo = JsonPath.from(ResourceLoader.asString("default/admin-info.json").get());
+        ResultSet<User> exUserResultSet = this.userModule.getUserByEmail(adminInfo.getString("email"));
+        if (exUserResultSet.isPresent()) {
             log.info("default admin already exists. skip admin creation");
             return;
         }
@@ -37,7 +37,7 @@ public class AppInitializeService {
         user.setEmailVerified(true);
         user.setPhoneVerified(true);
         user.setRole(User.UserRoles.SUPER_ADMIN.getRoleName());
-        Result<User> userResult = this.userModule.createUser(user);
+        ResultSet<User> userResultSet = this.userModule.createUser(user);
         log.info("default admin created");
     }
 }

@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class JWT {
+public class JwtUtil {
 
     public static String encode(JWTContent jwtContent, String jwtKey) {
         JWTCreator.Builder builder = com.auth0.jwt.JWT.create();
@@ -25,8 +25,8 @@ public class JWT {
                 builder = builder.withClaim(entry.getKey(), entry.getValue());
             }
         }
-        String token = builder.withSubject(jwtContent.getSubject())
-                .withExpiresAt(DateUtils.addMilliseconds(DateHelper.nowAsDate(), (int) jwtContent.getExpiredIn()))
+        String token = builder.withSubject(jwtContent.getMainSubject())
+                .withExpiresAt(DateUtils.addMilliseconds(DateTimeUtils.nowAsDate(), (int) jwtContent.getExpiredIn()))
                 .sign(Algorithm.HMAC256(jwtKey));
         return token;
     }
@@ -39,7 +39,7 @@ public class JWT {
             }
         }
         Instant instant = Instant.now().plusMillis((long) jwtContent.getExpiredIn());
-        String token = builder.withSubject(jwtContent.getSubject())
+        String token = builder.withSubject(jwtContent.getMainSubject())
                 .withExpiresAt(Date.from(instant))
                 .sign(Algorithm.HMAC256(jwtKey));
         return token;
@@ -51,7 +51,7 @@ public class JWT {
             Algorithm algorithm = Algorithm.HMAC256(jwtKey);
             JWTVerifier verifier = com.auth0.jwt.JWT.require(algorithm).build();
             DecodedJWT content = verifier.verify(token);
-            jwtContent.setSubject(content.getSubject());
+            jwtContent.setMainSubject(content.getSubject());
             Map<String, String> claims = new HashMap<>();
             for (Map.Entry<String, Claim> entry : content.getClaims().entrySet()) {
                 claims.put(entry.getKey(), entry.getValue().asString());
@@ -68,7 +68,7 @@ public class JWT {
         try {
             JWTContent jwtContent = JWTContent.builder().build();
             Payload payload = com.auth0.jwt.JWT.decode(token);
-            jwtContent.setSubject(payload.getSubject());
+            jwtContent.setMainSubject(payload.getSubject());
             Map<String, String> claims = new HashMap<>();
             for (Map.Entry<String, Claim> entry : payload.getClaims().entrySet()) {
                 claims.put(entry.getKey(), entry.getValue().asString());

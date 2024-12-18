@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Slf4j
-public class AppResources {
+public class ResourceLoader {
     public static Optional<String> asString(String resource) {
         String string = null;
         try {

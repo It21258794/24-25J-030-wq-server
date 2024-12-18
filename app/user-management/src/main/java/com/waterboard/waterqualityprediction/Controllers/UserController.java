@@ -18,49 +18,49 @@ public class UserController {
     private UserModule userModule;
 
     @Autowired
-    private GlobalConfigs globalConfigs;
+    private GlobalAppConfig globalAppConfig;
 
 
     @PostMapping("/login")
     public ResponseEntity<UserDto> userLogin(@RequestBody UserDto loginDetails) {
-        Result<User> userResult = this.userModule.userLogin(User.init(loginDetails));
+        ResultSet<User> userResultSet = this.userModule.userLogin(User.init(loginDetails));
         SessionData sessionData = new SessionData();
-        sessionData.setUser(userResult.get());
+        sessionData.setUser(userResultSet.get());
         Session.setSessionData(sessionData);
-        UserDto userDto = UserDto.init(userResult.get());
+        UserDto userDto = UserDto.init(userResultSet.get());
         return ResponseEntity.ok()
-                .headers(this.userModule.getUserHeaders(userResult))
+                .headers(this.userModule.getUserHeaders(userResultSet))
                 .body(userDto);
     }
 
     @PostMapping("/password-reset/otp")
 //    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_EMAIL_OTP_REQUEST)
     public ResponseEntity sendResetPasswordEmailCode(@RequestBody UserDto emailDetails) {
-        Result<User> result = this.userModule.sendUserResetPasswordRequestViaEmail(emailDetails.getEmail());
+        ResultSet<User> resultSet = this.userModule.sendUserResetPasswordRequestViaEmail(emailDetails.getEmail());
         return ResponseEntity
                 .ok()
-                .body(new VerificationDataDto(result.getExtra(UserModuleExtraKeys.WEB_SERVER_REF)));
+                .body(new VerificationDataDto(resultSet.getExtra(UserModuleExtraKeys.WEB_SERVER_REF)));
     }
 
     @PostMapping("/password-reset/send-otp/sms")
 //    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_MOBILE_OTP_REQUEST)
     public ResponseEntity<VerificationDataDto> sendResetPasswordSMS(@RequestBody UserDto phoneDetails,  @RequestHeader(value = "vi-key",required = false) String ketStoreId) {
-        Result<User> result = this.userModule.sendUserResetPasswordRequestViaSMS(phoneDetails.getPhone());
+        ResultSet<User> resultSet = this.userModule.sendUserResetPasswordRequestViaSMS(phoneDetails.getPhone());
         return ResponseEntity
                 .ok()
-                .body(new VerificationDataDto(result.getExtra(UserModuleExtraKeys.WEB_SERVER_REF)));
+                .body(new VerificationDataDto(resultSet.getExtra(UserModuleExtraKeys.WEB_SERVER_REF)));
     }
 
     @PostMapping("/password-reset/token")
 //    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_OTP_VERIFY_REQUEST)
     public ResponseEntity<PasswordResetTokenDto> createPasswordResetToken(@RequestBody VerificationDataDto verificationDataDto) {
-        Result<User> result = this.userModule.resetPasswordTokenFromOTP(verificationDataDto);
-        return ResponseEntity.ok(new PasswordResetTokenDto(result.getExtra(UserModuleExtraKeys.RESET_PASSWORD_TOKEN)));
+        ResultSet<User> resultSet = this.userModule.resetPasswordTokenFromOTP(verificationDataDto);
+        return ResponseEntity.ok(new PasswordResetTokenDto(resultSet.getExtra(UserModuleExtraKeys.RESET_PASSWORD_TOKEN)));
     }
 
     @PostMapping("/password-reset")
     public ResponseEntity<UserDto> resetPassword(@RequestParam("token") String token, @RequestBody UserDto passwordDetails) {
-        Result<User> result = this.userModule.resetPassword(User.init(passwordDetails), token);
-        return ResponseEntity.ok(UserDto.init(result.get()));
+        ResultSet<User> resultSet = this.userModule.resetPassword(User.init(passwordDetails), token);
+        return ResponseEntity.ok(UserDto.init(resultSet.get()));
     }
 }

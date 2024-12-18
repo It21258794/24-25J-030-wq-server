@@ -1,7 +1,7 @@
 package com.waterboard.waterqualityprediction.filters;
 
-import com.waterboard.waterqualityprediction.exceptions.http.BaseException;
-import com.waterboard.waterqualityprediction.exceptions.http.InternalErrorException;
+import com.waterboard.waterqualityprediction.coreExceptions.http.BaseException;
+import com.waterboard.waterqualityprediction.coreExceptions.http.InternalErrorException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

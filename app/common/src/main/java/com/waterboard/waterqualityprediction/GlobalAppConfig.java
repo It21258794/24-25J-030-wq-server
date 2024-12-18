@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Setter
 @Getter
-public class GlobalConfigs{
+public class GlobalAppConfig {
     @Value("${global.is_debug:true}")
     private boolean isDebugModeOn = true;
 

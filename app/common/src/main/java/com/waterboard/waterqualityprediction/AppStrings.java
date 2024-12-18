@@ -21,7 +21,7 @@ public class AppStrings {
     private static final String defaultLanguage = "en";
 
     @Autowired
-    private GlobalConfigs globalConfigs;
+    private GlobalAppConfig globalAppConfig;
     private DocumentContext json;
 
     @Autowired
@@ -30,12 +30,12 @@ public class AppStrings {
     @PostConstruct
     public void postConstruct() throws IOException {
         log.info("Reading app string file from the classpath");
-        if (globalConfigs == null) {
+        if (globalAppConfig == null) {
             log.error("GlobalConfigs bean is not initialized!");
             throw new IllegalStateException("GlobalConfigs bean is not initialized!");
         }
 
-        String appStringsFile = globalConfigs.getAppStringsFile();
+        String appStringsFile = globalAppConfig.getAppStringsFile();
         if (appStringsFile == null || appStringsFile.isEmpty()) {
             log.error("App strings file path is not configured!");
             throw new IllegalStateException("App strings file path is not configured!");

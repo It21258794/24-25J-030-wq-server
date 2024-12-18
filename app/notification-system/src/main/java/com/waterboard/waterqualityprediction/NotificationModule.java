@@ -30,7 +30,7 @@ public class NotificationModule {
     QueueModule queueModule;
 
     @Autowired
-    CheckExternalApi checkExternalApi;
+    ExternalApiStatus externalApiStatus;
 
     @Autowired
     NotificationMessageFactory notificationMessageFactory;
@@ -42,7 +42,7 @@ public class NotificationModule {
         }
         if (notificationModuleConfigs.isNotificationRedirect()) {
             String emailDebugInfo = "Email redirected from : ";
-            if (!checkExternalApi.isExternal()) {
+            if (!externalApiStatus.isExternal()) {
                 for (Mail.MailAddress mailAddress : mail.getTo()) {
                     log.info("notification redirection set to true. email receiver change from={}, to={}", mailAddress.getEmail(),
                             notificationModuleConfigs.getNotificationRedirectEmail());
@@ -56,7 +56,7 @@ public class NotificationModule {
                     mail.getTo().get(count).setEmail(email.getEmail());
                     count++;
                 }
-                checkExternalApi.setExternal(false);
+                externalApiStatus.setExternal(false);
             }
             mail.getHtmlTemplate().getProps().put("_debug_info_", emailDebugInfo);
         }
@@ -66,7 +66,7 @@ public class NotificationModule {
 
     public void sendEmailAsync(Mail mail) {
         log.info("sending NotificationModule queue async emails = {}", mail.getToAsString());
-        queueModule.sendMessage(EMAIL_QUEUE, JSON.objectToString(mail));
+        queueModule.sendMessage(EMAIL_QUEUE, JsonUtils.objectToString(mail));
     }
 
     public MessageDto sendSMS(SMSMessage message) {
@@ -84,6 +84,6 @@ public class NotificationModule {
 
     public void sendSmsAsync(SMSMessage sms) {
         log.info("sending queue async, to = {},  sms = {}", sms.getPhoneNumber(), sms.getMessage());
-        queueModule.sendMessage(SMS_QUEUE, JSON.objectToString(sms));
+        queueModule.sendMessage(SMS_QUEUE, JsonUtils.objectToString(sms));
     }
 }

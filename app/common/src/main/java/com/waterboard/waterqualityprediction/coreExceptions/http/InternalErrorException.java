@@ -1,6 +1,6 @@
-package com.waterboard.waterqualityprediction.exceptions.http;
+package com.waterboard.waterqualityprediction.coreExceptions.http;
 
-import com.waterboard.waterqualityprediction.exceptions.ExType;
+import com.waterboard.waterqualityprediction.coreExceptions.ExType;
 import org.springframework.http.HttpStatus;
 
 public class InternalErrorException extends BaseException {

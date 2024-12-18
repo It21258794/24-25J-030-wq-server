@@ -1,4 +1,4 @@
-package com.waterboard.waterqualityprediction.exceptions.notification;
+package com.waterboard.waterqualityprediction.coreExceptions.notification;
 
 public class MailNotSendException extends RuntimeException {
     public MailNotSendException(String message) {

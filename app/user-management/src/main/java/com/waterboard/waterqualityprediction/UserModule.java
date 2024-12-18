@@ -1,10 +1,10 @@
 package com.waterboard.waterqualityprediction;
 
 import com.waterboard.waterqualityprediction.dto.user.VerificationDataDto;
-import com.waterboard.waterqualityprediction.exceptions.UnauthorizeException;
-import com.waterboard.waterqualityprediction.exceptions.user.ExType;
-import com.waterboard.waterqualityprediction.exceptions.user.InvalidInputException;
-import com.waterboard.waterqualityprediction.exceptions.user.UserNotFoundException;
+import com.waterboard.waterqualityprediction.coreExceptions.UnauthorizeException;
+import com.waterboard.waterqualityprediction.coreExceptions.user.ExType;
+import com.waterboard.waterqualityprediction.coreExceptions.user.InvalidInputException;
+import com.waterboard.waterqualityprediction.coreExceptions.user.UserNotFoundException;
 import com.waterboard.waterqualityprediction.models.user.User;
 import com.waterboard.waterqualityprediction.services.UserNotificationProxyService;
 import com.waterboard.waterqualityprediction.services.UserService;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
-import java.security.PrivateKey;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,21 +26,21 @@ public class UserModule {
     private UserService userService;
 
     @Autowired
-    private GlobalConfigs globalConfigs;
+    private GlobalAppConfig globalAppConfig;
 
     @Autowired
     private UserNotificationProxyService userNotificationProxyService;
 
-    public Result<User> getUserByEmail(String email) {
-        return Result.of(this.userService.getUserByEmail(email));
+    public ResultSet<User> getUserByEmail(String email) {
+        return ResultSet.of(this.userService.getUserByEmail(email));
     }
 
-    public Result<User> createUser(User user) {
-        Result<User> userResult = new Result<>(this.userService.createUser(user));
-        return userResult;
+    public ResultSet<User> createUser(User user) {
+        ResultSet<User> userResultSet = new ResultSet<>(this.userService.createUser(user));
+        return userResultSet;
     }
 
-    public Result<User> userLogin(User loginDetails) {
+    public ResultSet<User> userLogin(User loginDetails) {
         User user;
         try {
             user = this.userService.login(loginDetails);
@@ -53,69 +52,69 @@ public class UserModule {
         } catch (Exception e) {
             throw e;
         }
-        Result<User> userResult = new Result<>(user);
+        ResultSet<User> userResultSet = new ResultSet<>(user);
         String token = this.userService.userToken(user);
-        userResult.addExtra(UserModuleExtraKeys.USER_TOKEN, token);
-        return userResult;
+        userResultSet.addExtra(UserModuleExtraKeys.USER_TOKEN, token);
+        return userResultSet;
     }
 
-    public HttpHeaders getUserHeaders(Result<User> userResult) {
+    public HttpHeaders getUserHeaders(ResultSet<User> userResultSet) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        if (userResult.getExtra(UserModuleExtraKeys.USER_TOKEN) != null) {
-            httpHeaders.add("Authorization", userResult.getExtra(UserModuleExtraKeys.USER_TOKEN));
+        if (userResultSet.getExtra(UserModuleExtraKeys.USER_TOKEN) != null) {
+            httpHeaders.add("Authorization", userResultSet.getExtra(UserModuleExtraKeys.USER_TOKEN));
         }
 
         return httpHeaders;
     }
 
-    public Result<User> sendUserResetPasswordRequestViaEmail(String email) {
+    public ResultSet<User> sendUserResetPasswordRequestViaEmail(String email) {
         Optional<User> opUser = this.userService.getUserByEmail(email);
         Check.throwIfEmpty(opUser, new UserNotFoundException("user not found for email " + email));
-        Result<User> result = new Result<>(opUser.get());
+        ResultSet<User> resultSet = new ResultSet<>(opUser.get());
         this.userService.checkPasswordResetLimit(opUser.get());
         this.userService.updateResetLinkSendCount(opUser.get(),false);
         User updatedUser = userService.addMetaData(opUser.get().getId(), UserModuleExtraKeys.OTP_TOKEN, UUID.randomUUID().toString());
         String token = this.userNotificationProxyService.sendPasswordResetEmailCode(updatedUser);
-        result.addExtra(UserModuleExtraKeys.WEB_SERVER_REF, token);
-        return result;
+        resultSet.addExtra(UserModuleExtraKeys.WEB_SERVER_REF, token);
+        return resultSet;
     }
 
-    public Result<User> resetPasswordTokenFromOTP(VerificationDataDto mobileVerificationData) {
-        JWTContent tokenData = JWT.decode(mobileVerificationData.getServerRef(), globalConfigs.getSecretKey());
-        if (mobileVerificationData.getOtp() == null || !Hash.match(mobileVerificationData.getOtp(), tokenData.getPayload().get(UserModuleExtraKeys.HASH))) {
+    public ResultSet<User> resetPasswordTokenFromOTP(VerificationDataDto mobileVerificationData) {
+        JWTContent tokenData = JwtUtil.decode(mobileVerificationData.getServerRef(), globalAppConfig.getSecretKey());
+        if (mobileVerificationData.getOtp() == null || !HashUtil.match(mobileVerificationData.getOtp(), tokenData.getPayload().get(UserModuleExtraKeys.HASH))) {
             log.error("invalid otp provided for password reset otp = {}", tokenData.getPayload().get(UserModuleExtraKeys.HASH));
             throw new InvalidInputException("invalid otp provided");
         }
         User user = this.userService.getUserByPasswordResetRequestToken(mobileVerificationData.getServerRef(), UserModuleExtraKeys.RESET_PASSWORD_REQUEST, UserModuleExtraKeys.OTP_TOKEN);
-        Result<User> result = new Result<>(user);
+        ResultSet<User> resultSet = new ResultSet<>(user);
         JWTContent content = JWTContent.builder()
                 .expiredIn(DateUtils.MILLIS_PER_MINUTE * 10)
-                .subject(user.getId())
+                .mainSubject(user.getId())
                 .payload(Map.of(UserModuleExtraKeys.ACTION, UserModuleExtraKeys.RESET_PASSWORD,
                         UserModuleExtraKeys.RESET_PASSWORD, user.getMetaData().get(UserModuleExtraKeys.RESET_PASSWORD).toString()
                 ))
                 .build();
-        String passwordResetToken = JWT.encode(content, globalConfigs.getSecretKey());
-        result.addExtra(UserModuleExtraKeys.RESET_PASSWORD_TOKEN, passwordResetToken);
-        return result;
+        String passwordResetToken = JwtUtil.encode(content, globalAppConfig.getSecretKey());
+        resultSet.addExtra(UserModuleExtraKeys.RESET_PASSWORD_TOKEN, passwordResetToken);
+        return resultSet;
     }
 
-    public Result<User> resetPassword(User userDetails, String resetPasswordToken) {
+    public ResultSet<User> resetPassword(User userDetails, String resetPasswordToken) {
         User user = this.userService.resetPassword(userDetails, resetPasswordToken);
         this.userService.updateResetLinkSendCount(user,true);
-        return new Result<>(user);
+        return new ResultSet<>(user);
     }
 
-    public Result<User> sendUserResetPasswordRequestViaSMS(String mobile) {
+    public ResultSet<User> sendUserResetPasswordRequestViaSMS(String mobile) {
         Optional<User> opUser = this.userService.getUserByPhoneWithCountryCode(mobile);
 
         Check.throwIfEmpty(opUser, new UserNotFoundException("user not found for mobile " + mobile));
-        Result<User> result = new Result<>(opUser.get());
+        ResultSet<User> resultSet = new ResultSet<>(opUser.get());
         this.userService.checkPasswordResetLimit(opUser.get());
         this.userService.updateResetLinkSendCount(opUser.get(),false);
         User updatedUser = userService.addMetaData(opUser.get().getId(), UserModuleExtraKeys.OTP_TOKEN, UUID.randomUUID().toString());
         String token = this.userNotificationProxyService.sendPasswordResetSMS(updatedUser);
-        result.addExtra(UserModuleExtraKeys.WEB_SERVER_REF, token);
-        return result;
+        resultSet.addExtra(UserModuleExtraKeys.WEB_SERVER_REF, token);
+        return resultSet;
     }
 }

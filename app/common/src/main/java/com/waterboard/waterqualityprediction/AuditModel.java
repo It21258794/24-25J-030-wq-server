@@ -15,3 +15,4 @@ public class AuditModel {
     @LastModifiedDate
     private Instant updatedAt;
 }
+

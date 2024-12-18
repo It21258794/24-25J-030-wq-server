@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-public class DateHelper {
+public class DateTimeUtils {
     public static Date nowAsDate() {
         return new Date();
     }

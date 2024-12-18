@@ -7,13 +7,31 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="core" />
+        <module name="security-module" />
+        <module name="notification-system" />
+        <module name="common" />
+        <module name="user-management" />
         <module name="chlorine-consumption" />
         <module name="main-applicationm" />
         <module name="water-quality-prediction" />
-        <module name="notification-system" />
         <module name="flow-customization" />
         <module name="sensor-management" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="chlorine-consumption" options="-parameters" />
+      <module name="common" options="-parameters" />
+      <module name="core" options="-parameters" />
+      <module name="flow-customization" options="-parameters" />
+      <module name="main-applicationm" options="-parameters" />
+      <module name="notification-system" options="-parameters" />
+      <module name="security-module" options="-parameters" />
+      <module name="sensor-management" options="-parameters" />
+      <module name="user-management" options="-parameters" />
+      <module name="water-quality-prediction" options="-parameters" />
+    </option>
   </component>
 </project>

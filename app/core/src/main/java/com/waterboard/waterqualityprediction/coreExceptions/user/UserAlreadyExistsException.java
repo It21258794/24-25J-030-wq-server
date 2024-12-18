@@ -1,7 +1,7 @@
-package com.waterboard.waterqualityprediction.exceptions.user;
+package com.waterboard.waterqualityprediction.coreExceptions.user;
 
-import com.waterboard.waterqualityprediction.exceptions.ConflictException;
-import com.waterboard.waterqualityprediction.exceptions.ExceptionType;
+import com.waterboard.waterqualityprediction.coreExceptions.ConflictException;
+import com.waterboard.waterqualityprediction.coreExceptions.ExceptionType;
 
 public class UserAlreadyExistsException extends ConflictException {
   public UserAlreadyExistsException(ExceptionType type, String message, Object... params) {

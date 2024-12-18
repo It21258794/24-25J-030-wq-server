@@ -4,7 +4,6 @@ import com.waterboard.waterqualityprediction.*;
 import com.waterboard.waterqualityprediction.models.Mail;
 import com.waterboard.waterqualityprediction.models.SMSMessage;
 import com.waterboard.waterqualityprediction.models.user.User;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import java.util.Map;
 public class UserNotificationProxyService {
 
     @Autowired
-    private GlobalConfigs globalConfigs;
+    private GlobalAppConfig globalAppConfig;
 
     @Autowired
     private AppStrings appStrings;
@@ -27,18 +26,18 @@ public class UserNotificationProxyService {
     private NotificationModule notificationModule;
 
     public String sendPasswordResetEmailCode(User user) {
-        int code = globalConfigs.isDebugModeOn() ? 55555 : Generator.getRandom5DigitNumber();
+        int code = globalAppConfig.isDebugModeOn() ? 55555 : Generator.getRandom5DigitNumber();
         JWTContent content = JWTContent.builder()
                 .expiredIn(DateUtils.MILLIS_PER_MINUTE * 10)
-                .subject(user.getId())
+                .mainSubject(user.getId())
                 .payload(Map.of(UserModuleExtraKeys.ACTION, UserModuleExtraKeys.RESET_PASSWORD_REQUEST,
-                        UserModuleExtraKeys.HASH, Hash.make(code + ""),
+                        UserModuleExtraKeys.HASH, HashUtil.make(code + ""),
                         UserModuleExtraKeys.OTP_TOKEN,user.getMetaData().get(UserModuleExtraKeys.OTP_TOKEN).toString()
 
                 ))
                 .build();
-        String token = JWT.encode(content, globalConfigs.getSecretKey());
-        log.info("sending password reset code email to user = {}", appStrings.getContactInformation().getSupportEmail());
+        String token = JwtUtil.encode(content, globalAppConfig.getSecretKey());
+        log.info("sending password reset code email to user = {}", appStrings.getContactInformation().getSupportedEmail());
         Mail mail = Mail.builder()
                 .htmlTemplate(new Mail.HtmlTemplate("emails/user_password_reset_request_code.html",
                         Map.of("user", user,
@@ -53,16 +52,16 @@ public class UserNotificationProxyService {
     }
 
     public String sendPasswordResetSMS(User user) {
-        int code = globalConfigs.isDebugModeOn() ? 55555 : Generator.getRandom5DigitNumber();
+        int code = globalAppConfig.isDebugModeOn() ? 55555 : Generator.getRandom5DigitNumber();
         JWTContent content = JWTContent.builder()
                 .expiredIn(DateUtils.MILLIS_PER_MINUTE * 10)
-                .subject(user.getId())
+                .mainSubject(user.getId())
                 .payload(Map.of(UserModuleExtraKeys.ACTION, UserModuleExtraKeys.RESET_PASSWORD_REQUEST,
-                        UserModuleExtraKeys.HASH, Hash.make(code + ""),
+                        UserModuleExtraKeys.HASH, HashUtil.make(code + ""),
                         UserModuleExtraKeys.OTP_TOKEN,user.getMetaData().get(UserModuleExtraKeys.OTP_TOKEN).toString()
                 ))
                 .build();
-        String token = JWT.encode(content, globalConfigs.getSecretKey());
+        String token = JwtUtil.encode(content, globalAppConfig.getSecretKey());
         log.info("sending password reset sms to user = {}", user.getEmail());
 
         String message = appStrings.getFormattedString("sms-templates.otp-password-reset", Map.of("code", code));

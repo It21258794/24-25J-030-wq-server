@@ -14,17 +14,17 @@ import java.util.Map;
 @Slf4j
 public class LoggingFilter implements Filter {
 
-    private final RequestDataProvider requestDataProvider;
+    private final RequestContextManager requestContextManager;
 
-    public  LoggingFilter(RequestDataProvider requestDataProvider) {
-        this.requestDataProvider = requestDataProvider;
+    public  LoggingFilter(RequestContextManager requestContextManager) {
+        this.requestContextManager = requestContextManager;
     }
 
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         long requestTime = System.currentTimeMillis();
-        MDC.put("request_unique_id", "[" + requestDataProvider.getRequestHash() + "]");
+        MDC.put("request_unique_id", "[" + requestContextManager.getRequestHash() + "]");
         filterChain.doFilter(servletRequest, servletResponse);
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
@@ -38,11 +38,11 @@ public class LoggingFilter implements Filter {
                         "method", httpServletRequest.getMethod(),
                         "status", httpServletResponse.getStatus(),
                         "responseTime", System.currentTimeMillis() - requestTime,
-                        "requestHash", requestDataProvider.getRequestHash(),
-                        "clientIP", requestDataProvider.getClientIP(),
-                        "clientAppPlatform", requestDataProvider.getAppPlatform(),
-                        "clientAppVersion", requestDataProvider.getAppVersion(),
-                        "clientDevice", requestDataProvider.getDevice()
+                        "requestHash", requestContextManager.getRequestHash(),
+                        "clientIP", requestContextManager.getClientIP(),
+                        "clientAppPlatform", requestContextManager.getAppPlatform(),
+                        "clientAppVersion", requestContextManager.getAppVersion(),
+                        "clientDevice", requestContextManager.getDevice()
                 )
         );
         String token = httpServletRequest.getHeader("Authorization");
@@ -50,12 +50,12 @@ public class LoggingFilter implements Filter {
             token = httpServletRequest.getParameter("_authorization");
         }
         if (StringUtils.isNotBlank(token) && !((HttpServletRequest) servletRequest).getRequestURI().startsWith("/api/external/")) {
-            String subject = JWT.decodeWithoutSecret(token).getSubject();
+            String subject = JwtUtil.decodeWithoutSecret(token).getMainSubject();
             if (StringUtils.isNotBlank(subject)) {
                 data.put("authorizedSubject", subject);
             }
         }
-        log.info("http request trace {}", JSON.objectToString(
+        log.info("http request trace {}", JsonUtils.objectToString(
                 data
         ));
     }

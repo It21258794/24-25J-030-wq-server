@@ -7,19 +7,19 @@ import java.util.Map;
 import java.util.Optional;
 
 @NoArgsConstructor
-public class Result<T> {
+public class ResultSet<T> {
     private T data;
     private Map<String, String> extras = new HashMap<>();
 
-    public Result(T data) {
+    public ResultSet(T data) {
         this.data = data;
     }
 
-    public Result(Map<String, String> extras) {
+    public ResultSet(Map<String, String> extras) {
         this.extras = extras;
     }
 
-    public Result(T data, Map<String, String> extras) {
+    public ResultSet(T data, Map<String, String> extras) {
         this.data = data;
         this.extras = extras;
     }
@@ -63,19 +63,19 @@ public class Result<T> {
         return !this.isEmpty();
     }
 
-    public static <T>Result<T> of(T value) {
-        return new Result<>(value);
+    public static <T> ResultSet<T> of(T value) {
+        return new ResultSet<>(value);
     }
 
-    public static <T>Result<T> empty() {
-        return new Result<>();
+    public static <T> ResultSet<T> empty() {
+        return new ResultSet<>();
     }
 
-    public static <T>Result<T> of(Optional<T> value) {
+    public static <T> ResultSet<T> of(Optional<T> value) {
         if(value.isPresent()) {
-            return Result.of(value.get());
+            return ResultSet.of(value.get());
         }
-        return Result.empty();
+        return ResultSet.empty();
     }
 
     public void setData(T data) {

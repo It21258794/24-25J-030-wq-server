@@ -23,7 +23,7 @@ public class NotificationModuleListeners {
     private void jmsEmailEndpoint(String message) {
         log.info("receive jms message destination = {}, data = {}", EMAIL_QUEUE, StringUtils.truncate(message, 200));
         try {
-            Mail mail = JSON.stringToObject(message, Mail.class);
+            Mail mail = JsonUtils.stringToObject(message, Mail.class);
             this.notificationModule.sendEmail(mail);
         } catch (Exception e) {
             log.error("error sending email. error={}", e.getMessage());
@@ -35,7 +35,7 @@ public class NotificationModuleListeners {
     private void jmsSmsEndpoint(String message) {
         log.info("receive jms message destination = {}, data = {}", SMS_QUEUE, StringUtils.truncate(message, 200));
         try {
-            SMSMessage smsMessage = JSON.stringToObject(message, SMSMessage.class);
+            SMSMessage smsMessage = JsonUtils.stringToObject(message, SMSMessage.class);
             this.notificationModule.sendSMS(smsMessage);;
         } catch (Exception e) {
             log.error("error sending sms. error={}", e.getMessage());

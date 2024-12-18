@@ -2,7 +2,7 @@ package com.waterboard.waterqualityprediction;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-public class Hash {
+public class HashUtil {
     public static String make(String text) {
         var encoder = new BCryptPasswordEncoder();
         return encoder.encode(text);

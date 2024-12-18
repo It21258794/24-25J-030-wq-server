@@ -1,4 +1,4 @@
-package com.waterboard.waterqualityprediction.exceptions;
+package com.waterboard.waterqualityprediction.coreExceptions;
 
 public enum ExType implements ExceptionType {
 

@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 @Setter
-public class CheckExternalApi {
+public class ExternalApiStatus {
     private boolean isExternal;
 }

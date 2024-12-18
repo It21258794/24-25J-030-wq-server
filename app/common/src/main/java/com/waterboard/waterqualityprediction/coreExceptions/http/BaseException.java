@@ -1,7 +1,7 @@
-package com.waterboard.waterqualityprediction.exceptions.http;
+package com.waterboard.waterqualityprediction.coreExceptions.http;
 
-import com.waterboard.waterqualityprediction.JSON;
-import com.waterboard.waterqualityprediction.exceptions.ExceptionType;
+import com.waterboard.waterqualityprediction.JsonUtils;
+import com.waterboard.waterqualityprediction.coreExceptions.ExceptionType;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.simple.JSONObject;
@@ -78,7 +78,7 @@ public class BaseException extends RuntimeException {
         if (this.errors != null && this.errors.size() > 0) {
             object.put("fieldErrors", this.errors);
         }
-        return JSON.objectToString(object);
+        return JsonUtils.objectToString(object);
     }
 
     public ResponseEntity<Object> getJsonAsResponse() {

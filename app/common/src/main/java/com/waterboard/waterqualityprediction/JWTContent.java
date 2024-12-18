@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class JWTContent {
-    private String subject;
+    private String mainSubject;
     private Map<String, String> payload;
     private float expiredIn;
 }
