@@ -1,21 +1,22 @@
 package com.waterboard.waterqualityprediction.services.email;
 
+import com.waterboard.waterqualityprediction.JsonUtils;
 import com.waterboard.waterqualityprediction.NotificationModuleConfigs;
-import com.waterboard.waterqualityprediction.common.JSON;
 import com.waterboard.waterqualityprediction.dto.MailDto;
-import com.waterboard.waterqualityprediction.exception.MailNotSendException;
+import com.waterboard.waterqualityprediction.coreExceptions.notification.MailNotSendException;
 import com.waterboard.waterqualityprediction.models.Mail;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +36,7 @@ public class SmtpEmailService implements EmailService {
 
     @Override
     public MailDto sendEmail(Mail mail) {
-        log.info("sending email with smpt. address = {}", JSON.objectToString(mail.getTo()));
+        log.info("sending email with smpt. address = {}", JsonUtils.objectToString(mail.getTo()));
         String[] mailToArr = getMailToFromList(mail.getTo());
         try {
             MimeMessage message = emailSender.createMimeMessage();
@@ -60,7 +61,7 @@ public class SmtpEmailService implements EmailService {
                 });
             }
             emailSender.send(message);
-            log.info("sending email success with smpt. address = {}", JSON.objectToString(mail.getTo()));
+            log.info("sending email success with smpt. address = {}", JsonUtils.objectToString(mail.getTo()));
         } catch (Exception e) {
             log.error("email sending error" + e.getMessage());
             throw new MailNotSendException(e.getMessage());
