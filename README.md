@@ -150,5 +150,15 @@ mvn spring-boot:run
 >
 > fix(water-quality-prediction): separated file code for gnn model and gnn predict
 
+> [!TIP]
+> https://github.com/It21258794/24-25J-030-wq-server/pull/23
+>
+> feat(user- management): security filters and security configurations implemented
+>- user login, creation implemented
+>- reset password flow implemented
+>- spring version updated
+>- new modules called common and core added for better moduleraization
+>- fix(pom): build fail issue fixed, pom.xml files updated
+
 
 
