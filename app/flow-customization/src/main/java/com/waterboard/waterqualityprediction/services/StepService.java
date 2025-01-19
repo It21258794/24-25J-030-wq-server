@@ -42,5 +42,18 @@ public class StepService {
         }
     }
 
+    @Transactional
+    public String updateStepOrder(List<StepDTO> stepsDTO) {
+        for (StepDTO stepDTO : stepsDTO) {
+            Step step = entityManager.find(Step.class, stepDTO.getId());  // Find by ID
+            if (step != null) {
+                step.setStepOrder(stepDTO.getStepOrder());  // Only updating the order field
+            } else {
+                // Optionally log or throw an error if the step is not found
+                System.out.println("Step with ID " + stepDTO.getId() + " not found.");
+            }
+        }
+        return "Steps order updated successfully.";
+    }
 
 }

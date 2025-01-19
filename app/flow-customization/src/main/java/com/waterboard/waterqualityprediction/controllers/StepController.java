@@ -28,4 +28,9 @@ public class StepController {
         return stepService.getAllSteps();
     }
 
+    @PutMapping("/update/step-order")
+    public String updateStepOrder(@RequestBody List<StepDTO> stepsDTO) {
+        return stepService.updateStepOrder(stepsDTO);
+    }
+
 }
