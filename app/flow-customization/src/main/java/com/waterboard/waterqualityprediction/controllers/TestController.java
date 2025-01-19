@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tests")
 public class TestController {
@@ -18,5 +20,12 @@ public class TestController {
     public ResponseEntity<Test> createTest(@RequestBody TestDTO testDTO) {
         Test test = testService.addTest(testDTO);
         return ResponseEntity.ok(test);
+    }
+
+    //function to fetch all test
+    @GetMapping("/get/all-tests")
+    public ResponseEntity<List<Test>> getAllTests() {
+        List<Test> tests = testService.getAllTests();
+        return ResponseEntity.ok(tests);
     }
 }
