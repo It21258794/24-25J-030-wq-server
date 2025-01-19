@@ -14,6 +14,7 @@ public class Step {
 
     private String stepName;
     private String stepDescription;
+    private Integer stepOrder;
 
     // Getters and Setters
     public Long getId() {
@@ -38,5 +39,11 @@ public class Step {
 
     public void setStepDescription(String stepDescription) {
         this.stepDescription = stepDescription;
+    }
+    public Integer getStepOrder(){
+        return stepOrder;
+    }
+    public void setStepOrder(Integer stepOrder) {
+        this.stepOrder = stepOrder;
     }
 }
