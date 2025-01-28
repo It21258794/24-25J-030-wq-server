@@ -19,6 +19,11 @@ public class StepService {
     //function to add new step
     @Transactional
     public Step addStep(StepDTO stepDTO) {
+
+        if (isStepOrderExists(stepDTO.getStepOrder())) {
+            throw new IllegalArgumentException("Step order already exists.");
+        }
+
         Step step = new Step();
         step.setStepName(stepDTO.getStepName());
         step.setStepDescription(stepDTO.getStepDescription());
@@ -28,7 +33,13 @@ public class StepService {
         entityManager.persist(step);
         return step;
     }
-
+    // function to check if stepOrder already exists
+    private boolean isStepOrderExists(Integer stepOrder) {
+        TypedQuery<Long> query = entityManager.createQuery("SELECT COUNT(s) FROM Step s WHERE s.stepOrder = :stepOrder", Long.class);
+        query.setParameter("stepOrder", stepOrder);
+        Long count = query.getSingleResult();
+        return count > 0;  // if count > 0, the stepOrder exists
+    }
     //function to fetch all steps
     public List<Step> getAllSteps() {
         try {
