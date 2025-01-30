@@ -1,7 +1,5 @@
 package com.waterboard.waterqualityprediction;
 
-import com.waterboard.waterqualityprediction.common.CheckExternalApi;
-import com.waterboard.waterqualityprediction.common.JSON;
 import com.waterboard.waterqualityprediction.dto.MailDto;
 import com.waterboard.waterqualityprediction.dto.MessageDto;
 import com.waterboard.waterqualityprediction.models.Mail;
@@ -12,13 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-
 @Component
 @Slf4j
 public class NotificationModule {
 
     public static final String EMAIL_QUEUE = "com.water.quality.queue.email";
+    public static final String SMS_QUEUE = "com.water.quality.queue.sms";
 
     @Autowired
     NotificationModuleConfigs notificationModuleConfigs;
@@ -33,7 +30,7 @@ public class NotificationModule {
     QueueModule queueModule;
 
     @Autowired
-    CheckExternalApi checkExternalApi;
+    ExternalApiStatus externalApiStatus;
 
     @Autowired
     NotificationMessageFactory notificationMessageFactory;
@@ -45,7 +42,7 @@ public class NotificationModule {
         }
         if (notificationModuleConfigs.isNotificationRedirect()) {
             String emailDebugInfo = "Email redirected from : ";
-            if (!checkExternalApi.isExternal()) {
+            if (!externalApiStatus.isExternal()) {
                 for (Mail.MailAddress mailAddress : mail.getTo()) {
                     log.info("notification redirection set to true. email receiver change from={}, to={}", mailAddress.getEmail(),
                             notificationModuleConfigs.getNotificationRedirectEmail());
@@ -59,7 +56,7 @@ public class NotificationModule {
                     mail.getTo().get(count).setEmail(email.getEmail());
                     count++;
                 }
-                checkExternalApi.setExternal(false);
+                externalApiStatus.setExternal(false);
             }
             mail.getHtmlTemplate().getProps().put("_debug_info_", emailDebugInfo);
         }
@@ -69,7 +66,7 @@ public class NotificationModule {
 
     public void sendEmailAsync(Mail mail) {
         log.info("sending NotificationModule queue async emails = {}", mail.getToAsString());
-        queueModule.sendMessage(EMAIL_QUEUE, JSON.objectToString(mail));
+        queueModule.sendMessage(EMAIL_QUEUE, JsonUtils.objectToString(mail));
     }
 
     public MessageDto sendSMS(SMSMessage message) {
@@ -83,5 +80,10 @@ public class NotificationModule {
         messageService = notificationMessageFactory.getMessageService(message.getPhoneNumber());
         MessageDto messageDto = messageService.sendMessage(message);
         return messageDto;
+    }
+
+    public void sendSmsAsync(SMSMessage sms) {
+        log.info("sending queue async, to = {},  sms = {}", sms.getPhoneNumber(), sms.getMessage());
+        queueModule.sendMessage(SMS_QUEUE, JsonUtils.objectToString(sms));
     }
 }

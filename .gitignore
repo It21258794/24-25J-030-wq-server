@@ -27,3 +27,11 @@ logs/
 .env
 *.properties
 application.yml
+
+
+# Ignore all .jar files
+*.jar
+
+# Optionally, exclude specific directories
+/target/
+/build/

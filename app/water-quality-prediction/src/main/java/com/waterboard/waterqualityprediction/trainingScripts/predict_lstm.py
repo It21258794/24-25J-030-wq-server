@@ -23,8 +23,8 @@ def predict_future(model, scaler_X, scaler_y, last_data, steps, features):
 
     return np.array(predictions)
 
-# Example usage
-last_data = np.random.rand(30, 3)  # Replace with actual last 30 days of data
+# Example
+last_data = np.random.rand(30, 3)
 weekly_predictions = predict_future(model, scaler_X, scaler_y, last_data, steps=7, features=3)
 monthly_predictions = predict_future(model, scaler_X, scaler_y, last_data, steps=30, features=3)
 
