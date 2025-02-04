@@ -88,23 +88,25 @@ public class StepValueService {
     }
 
 
-    //function to get test and chemicals in each step.
     @Transactional
-    public StepValueDTO getStepValueByIdAndStepId(Long id, Long stepId) {
-        // Find the existing StepValue entity by id and stepId
-        String sql = "SELECT s FROM StepValue s WHERE s.id = :id AND s.stepId = :stepId";
+    public List<StepValueDTO> getStepValuesByStepId(Long stepId) {
+        // Find StepValue entities by stepId
+        String sql = "SELECT s FROM StepValue s WHERE s.stepId = :stepId";
         Query query = entityManager.createQuery(sql);
-        query.setParameter("id", id);
         query.setParameter("stepId", stepId);
 
-        StepValue stepValue = (StepValue) query.getSingleResult();
+        List<StepValue> stepValues = query.getResultList();
+        List<StepValueDTO> stepValueDTOs = new ArrayList<>();
 
-        if (stepValue != null) {
+        for (StepValue stepValue : stepValues) {
             StepValueDTO stepValueDTO = new StepValueDTO();
             stepValueDTO.setStepId(stepValue.getStepId());
             stepValueDTO.setTestId(stepValue.getTestId());
             stepValueDTO.setChemicalId(stepValue.getChemicalId());
             stepValueDTO.setStatus(stepValue.getStatus());
+            stepValueDTO.setTestValue(stepValue.getTestValue());
+            stepValueDTO.setChemicalValue(stepValue.getChemicalValue());
+            stepValueDTO.setValueAddedDate(stepValue.getValueAddedDate());
 
             // Fetch test and chemical names based on their IDs
             if (stepValue.getTestId() != null) {
@@ -121,9 +123,10 @@ public class StepValueService {
                 }
             }
 
-            return stepValueDTO;
+            stepValueDTOs.add(stepValueDTO);
         }
-        return null;
+
+        return stepValueDTOs;
     }
 
     //add values to test and chemicals

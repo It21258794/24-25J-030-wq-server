@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -37,16 +38,17 @@ public class StepValueController {
         }
     }
 
-    // Endpoint to get data by id and stepId
-    @GetMapping("/get-by-step/{id}/{stepId}")
-    public ResponseEntity<StepValueDTO> getStepValue(@PathVariable Long id, @PathVariable Long stepId) {
-        StepValueDTO stepValueDTO = stepValueService.getStepValueByIdAndStepId(id, stepId);
-        if (stepValueDTO != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(stepValueDTO);
+    // Endpoint to get data by stepId only
+    @GetMapping("/get-by-step/{stepId}")
+    public ResponseEntity<List<StepValueDTO>> getStepValues(@PathVariable Long stepId) {
+        List<StepValueDTO> stepValueDTOs = stepValueService.getStepValuesByStepId(stepId);
+        if (!stepValueDTOs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(stepValueDTOs);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
         }
     }
+
 
     //add values to test and chemicals.
     @PutMapping("/update-test-or-chemical-values/{id}/{stepId}")
