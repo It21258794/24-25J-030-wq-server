@@ -91,7 +91,7 @@ public class StepValueService {
     @Transactional
     public List<StepValueDTO> getStepValuesByStepId(Long stepId) {
         // Find StepValue entities by stepId
-        String sql = "SELECT s FROM StepValue s WHERE s.stepId = :stepId";
+        String sql = "SELECT s FROM StepValue s WHERE s.stepId = :stepId AND s.status = 'Pending'";
         Query query = entityManager.createQuery(sql);
         query.setParameter("stepId", stepId);
 
