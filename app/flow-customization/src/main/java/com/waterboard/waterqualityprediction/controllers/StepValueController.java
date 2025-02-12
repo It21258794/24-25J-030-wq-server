@@ -27,16 +27,16 @@ public class StepValueController {
         return ResponseEntity.status(HttpStatus.CREATED).body(stepValueDTO);
     }
 
-    // Endpoint to remove test or chemical, and delete the record if both are removed
-    @PutMapping("/remove-test-or-chemical/{id}")
-    public ResponseEntity<StepValue> updateStepValue(@PathVariable Long id, @RequestBody StepValueDTO stepValueDTO) {
-        StepValue updatedStepValue = stepValueService.updateStepValue(id, stepValueDTO);
-        if (updatedStepValue != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(updatedStepValue);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
+//    // Endpoint to remove test or chemical, and delete the record if both are removed
+//    @PutMapping("/remove-test-or-chemical/{id}")
+//    public ResponseEntity<StepValue> updateStepValue(@PathVariable Long id, @RequestBody StepValueDTO stepValueDTO) {
+//        StepValue updatedStepValue = stepValueService.updateStepValue(id, stepValueDTO);
+//        if (updatedStepValue != null) {
+//            return ResponseEntity.status(HttpStatus.OK).body(updatedStepValue);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//    }
 
     // Endpoint to get data by stepId only
     @GetMapping("/get-by-step/{stepId}")
