@@ -170,10 +170,8 @@ public class StepValueService {
 
         return null; // Return null if the record is not found
     }
-    //get all tests
     @Transactional
     public List<StepValueDTO> getAllStepValues() {
-        // Fetch all StepValue entities from the database
         String sql = "SELECT s FROM StepValue s WHERE s.status = 'Confirmed'";
         Query query = entityManager.createQuery(sql);
         List<StepValue> stepValues = query.getResultList();
@@ -182,9 +180,13 @@ public class StepValueService {
 
         for (StepValue stepValue : stepValues) {
             StepValueDTO stepValueDTO = new StepValueDTO();
+            stepValueDTO.setId(stepValue.getId());  // Set ID
             stepValueDTO.setStepId(stepValue.getStepId());
             stepValueDTO.setTestId(stepValue.getTestId());
             stepValueDTO.setChemicalId(stepValue.getChemicalId());
+            stepValueDTO.setTestValue(stepValue.getTestValue());  // Set testValue
+            stepValueDTO.setChemicalValue(stepValue.getChemicalValue());  // Set chemicalValue
+            stepValueDTO.setValueAddedDate(stepValue.getValueAddedDate());  // Set valueAddedDate
             stepValueDTO.setStatus(stepValue.getStatus());
 
             // Fetch test name based on testId
@@ -203,7 +205,6 @@ public class StepValueService {
                 }
             }
 
-            // Add the populated StepValueDTO to the list
             stepValueDTOs.add(stepValueDTO);
         }
 
