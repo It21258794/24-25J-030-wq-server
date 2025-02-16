@@ -3,7 +3,7 @@ package com.waterboard.waterqualityprediction.dto;
 import java.time.LocalDateTime;
 
 public class StepValueDTO {
-
+    private Long id;
     private Long stepId;
     private Long testId;
     private Long chemicalId;
@@ -15,6 +15,13 @@ public class StepValueDTO {
     private String status;
 
     // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
     public Long getStepId() {
         return stepId;
     }
@@ -85,4 +92,6 @@ public class StepValueDTO {
     public void setStatus(String status) {
         this.status = status;
     }
+
+
 }

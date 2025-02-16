@@ -49,10 +49,12 @@ public class StepValueController {
         }
     }
 
-    @PutMapping("/update-test-or-chemical-values/{id}")
+    //add values to test and chemicals.
+    @PutMapping("/update-test-or-chemical-values/{id}/{stepId}")
     public ResponseEntity<StepValueDTO> updateStepValue(@PathVariable Long id,
+                                                        @PathVariable Long stepId,
                                                         @RequestBody StepValueDTO stepValueDTO) {
-        StepValue updatedStepValue = stepValueService.updateStepValue(id, stepValueDTO);
+        StepValue updatedStepValue = stepValueService.updateStepValue(id, stepId, stepValueDTO);
         if (updatedStepValue != null) {
             StepValueDTO responseDTO = new StepValueDTO();
             responseDTO.setStepId(updatedStepValue.getStepId());

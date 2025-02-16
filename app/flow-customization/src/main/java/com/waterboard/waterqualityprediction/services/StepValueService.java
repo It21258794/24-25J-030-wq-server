@@ -89,85 +89,83 @@ public class StepValueService {
 //    }
 
 
-        @Transactional
-        public List<StepValueDTO> getStepValuesByStepId(Long stepId) {
-            // Find StepValue entities by stepId
-            String sql = "SELECT s FROM StepValue s WHERE s.stepId = :stepId AND s.status = 'Pending'";
-            Query query = entityManager.createQuery(sql);
-            query.setParameter("stepId", stepId);
+    @Transactional
+    public List<StepValueDTO> getStepValuesByStepId(Long stepId) {
+        // Find StepValue entities by stepId
+        String sql = "SELECT s FROM StepValue s WHERE s.stepId = :stepId AND s.status = 'Pending'";
+        Query query = entityManager.createQuery(sql);
+        query.setParameter("stepId", stepId);
 
-            List<StepValue> stepValues = query.getResultList();
-            List<StepValueDTO> stepValueDTOs = new ArrayList<>();
+        List<StepValue> stepValues = query.getResultList();
+        List<StepValueDTO> stepValueDTOs = new ArrayList<>();
 
-            for (StepValue stepValue : stepValues) {
-                StepValueDTO stepValueDTO = new StepValueDTO();
-                stepValueDTO.setStepId(stepValue.getStepId());
-                stepValueDTO.setTestId(stepValue.getTestId());
-                stepValueDTO.setChemicalId(stepValue.getChemicalId());
-                stepValueDTO.setStatus(stepValue.getStatus());
-                stepValueDTO.setTestValue(stepValue.getTestValue());
-                stepValueDTO.setChemicalValue(stepValue.getChemicalValue());
-                stepValueDTO.setValueAddedDate(stepValue.getValueAddedDate());
+        for (StepValue stepValue : stepValues) {
+            StepValueDTO stepValueDTO = new StepValueDTO();
+            stepValueDTO.setId(stepValue.getId());  // Include ID
+            stepValueDTO.setStepId(stepValue.getStepId());
+            stepValueDTO.setTestId(stepValue.getTestId());
+            stepValueDTO.setChemicalId(stepValue.getChemicalId());
+            stepValueDTO.setStatus(stepValue.getStatus());
+            stepValueDTO.setTestValue(stepValue.getTestValue());
+            stepValueDTO.setChemicalValue(stepValue.getChemicalValue());
+            stepValueDTO.setValueAddedDate(stepValue.getValueAddedDate());
 
-                // Fetch test and chemical names based on their IDs
-                if (stepValue.getTestId() != null) {
-                    Test test = entityManager.find(Test.class, stepValue.getTestId());
-                    if (test != null) {
-                        stepValueDTO.setTestName(test.getTestName());
-                    } else {
-                        System.out.println("Test not found for ID: " + stepValue.getTestId());
-                    }
+            // Fetch test and chemical names based on their IDs
+            if (stepValue.getTestId() != null) {
+                Test test = entityManager.find(Test.class, stepValue.getTestId());
+                if (test != null) {
+                    stepValueDTO.setTestName(test.getTestName());
+                } else {
+                    System.out.println("Test not found for ID: " + stepValue.getTestId());
                 }
-
-                if (stepValue.getChemicalId() != null) {
-                    Chemical chemical = entityManager.find(Chemical.class, stepValue.getChemicalId());
-                    if (chemical != null) {
-                        stepValueDTO.setChemicalName(chemical.getChemicalName());
-                    } else {
-                        System.out.println("Chemical not found for ID: " + stepValue.getChemicalId());
-                    }
-                }
-
-                stepValueDTOs.add(stepValueDTO);
             }
 
-            return stepValueDTOs;
+            if (stepValue.getChemicalId() != null) {
+                Chemical chemical = entityManager.find(Chemical.class, stepValue.getChemicalId());
+                if (chemical != null) {
+                    stepValueDTO.setChemicalName(chemical.getChemicalName());
+                } else {
+                    System.out.println("Chemical not found for ID: " + stepValue.getChemicalId());
+                }
+            }
+
+            stepValueDTOs.add(stepValueDTO);
         }
 
+        return stepValueDTOs;
+    }
+
+    //add values to test and chemicals
     @Transactional
-    public StepValue updateStepValue(Long id, StepValueDTO stepValueDTO) {
-        // Find the existing StepValue entity by id
-        String sql = "SELECT s FROM StepValue s WHERE s.id = :id";
+    public StepValue updateStepValue(Long id, Long stepId, StepValueDTO stepValueDTO) {
+        // Find the existing StepValue entity by id and stepId
+        String sql = "SELECT s FROM StepValue s WHERE s.id = :id AND s.stepId = :stepId";
         Query query = entityManager.createQuery(sql);
         query.setParameter("id", id);
+        query.setParameter("stepId", stepId);
 
-        try {
-            StepValue stepValue = (StepValue) query.getSingleResult();
-            if (stepValue != null) {
-                // Update the test and chemical values
-                if (stepValueDTO.getTestValue() != null) {
-                    stepValue.setTestValue(stepValueDTO.getTestValue());
-                }
-
-                if (stepValueDTO.getChemicalValue() != null) {
-                    stepValue.setChemicalValue(stepValueDTO.getChemicalValue());
-                }
-
-                // Update status to "Confirmed"
-                stepValue.setStatus("Confirmed");
-
-                // Set value added date
-                stepValue.setValueAddedDate(LocalDateTime.now());
-
-                // Persist the updated entity
-                entityManager.merge(stepValue);
-
-                // Return the updated StepValue object
-                return stepValue;
+        StepValue stepValue = (StepValue) query.getSingleResult();
+        if (stepValue != null) {
+            // Update the test and chemical values
+            if (stepValueDTO.getTestValue() != null) {
+                stepValue.setTestValue(stepValueDTO.getTestValue());
             }
-        } catch (NoResultException e) {
-            // Handle the case where no entity is found
-            return null;
+
+            if (stepValueDTO.getChemicalValue() != null) {
+                stepValue.setChemicalValue(stepValueDTO.getChemicalValue());
+            }
+
+            // Update status to "Confirmed"
+            stepValue.setStatus("Confirmed");
+
+            // Set value added date
+            stepValue.setValueAddedDate(LocalDateTime.now());
+
+            // Persist the updated entity
+            entityManager.merge(stepValue);
+
+            // Return the updated StepValue object
+            return stepValue;
         }
 
         return null; // Return null if the record is not found
