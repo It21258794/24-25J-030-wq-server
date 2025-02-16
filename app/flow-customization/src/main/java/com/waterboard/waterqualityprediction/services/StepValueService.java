@@ -6,6 +6,7 @@ import com.waterboard.waterqualityprediction.models.StepValue;
 import com.waterboard.waterqualityprediction.models.Test;
 import com.waterboard.waterqualityprediction.models.Chemical;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -133,42 +134,44 @@ public class StepValueService {
             return stepValueDTOs;
         }
 
-    //add values to test and chemicals
     @Transactional
-    public StepValue updateStepValue(Long id, Long stepId, StepValueDTO stepValueDTO) {
-        // Find the existing StepValue entity by id and stepId
-        String sql = "SELECT s FROM StepValue s WHERE s.id = :id AND s.stepId = :stepId";
+    public StepValue updateStepValue(Long id, StepValueDTO stepValueDTO) {
+        // Find the existing StepValue entity by id
+        String sql = "SELECT s FROM StepValue s WHERE s.id = :id";
         Query query = entityManager.createQuery(sql);
         query.setParameter("id", id);
-        query.setParameter("stepId", stepId);
 
-        StepValue stepValue = (StepValue) query.getSingleResult();
-        if (stepValue != null) {
-            // Update the test and chemical values
-            if (stepValueDTO.getTestValue() != null) {
-                stepValue.setTestValue(stepValueDTO.getTestValue());
+        try {
+            StepValue stepValue = (StepValue) query.getSingleResult();
+            if (stepValue != null) {
+                // Update the test and chemical values
+                if (stepValueDTO.getTestValue() != null) {
+                    stepValue.setTestValue(stepValueDTO.getTestValue());
+                }
+
+                if (stepValueDTO.getChemicalValue() != null) {
+                    stepValue.setChemicalValue(stepValueDTO.getChemicalValue());
+                }
+
+                // Update status to "Confirmed"
+                stepValue.setStatus("Confirmed");
+
+                // Set value added date
+                stepValue.setValueAddedDate(LocalDateTime.now());
+
+                // Persist the updated entity
+                entityManager.merge(stepValue);
+
+                // Return the updated StepValue object
+                return stepValue;
             }
-
-            if (stepValueDTO.getChemicalValue() != null) {
-                stepValue.setChemicalValue(stepValueDTO.getChemicalValue());
-            }
-
-            // Update status to "Confirmed"
-            stepValue.setStatus("Confirmed");
-
-            // Set value added date
-            stepValue.setValueAddedDate(LocalDateTime.now());
-
-            // Persist the updated entity
-            entityManager.merge(stepValue);
-
-            // Return the updated StepValue object
-            return stepValue;
+        } catch (NoResultException e) {
+            // Handle the case where no entity is found
+            return null;
         }
 
         return null; // Return null if the record is not found
     }
-
     //get all tests
     @Transactional
     public List<StepValueDTO> getAllStepValues() {
