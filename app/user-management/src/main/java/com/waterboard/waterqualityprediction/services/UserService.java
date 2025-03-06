@@ -1,7 +1,7 @@
 package com.waterboard.waterqualityprediction.services;
 
 import com.waterboard.waterqualityprediction.*;
-import com.waterboard.waterqualityprediction.coreExceptions.UnauthorizeException;
+import com.waterboard.waterqualityprediction.commonExceptions.UnauthorizeException;
 import com.waterboard.waterqualityprediction.coreExceptions.user.*;
 import com.waterboard.waterqualityprediction.models.user.User;
 import com.waterboard.waterqualityprediction.repository.UserRepository;
@@ -29,6 +29,8 @@ public class UserService {
 
     @Autowired
     private GlobalAppConfig globalAppConfig;
+    @Autowired
+    private UserNotificationProxyService userNotificationProxyService;
 
     public User save(User user){
         user.set_query("");
@@ -47,6 +49,25 @@ public class UserService {
         return result;
     }
 
+    public User createAdminUser(User user) {
+        log.info("create user = {}", JsonUtils.objectToString(user));
+        if (StringUtils.isNotBlank(user.getEmail()) && this.getUserByEmail(user.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException(ExType.EMAIL_ALREADY_EXISTS, "user already exists with email {}" + user.getEmail());
+        }
+        if (StringUtils.isNotBlank(user.getPhone()) && this.getUserByPhone(user.getPhone()).isPresent()) {
+            throw new UserAlreadyExistsException(ExType.MOBILE_ALREADY_EXISTS, "user already exists with phone {} " + user.getPhone());
+        }
+        if (user.getPassword() != null){
+            user.setPassword(HashUtil.make(user.getPassword()));
+        }
+        if (user.getStatus() != null) {
+            user.setStatus(user.getStatus());
+        } else {
+            user.setStatus(User.UserStatus.ACTIVE);
+        }
+        return userRepository.save(user);
+    }
+
     public User createUser(User user) {
         log.info("create user = {}", JsonUtils.objectToString(user));
         if (StringUtils.isNotBlank(user.getEmail()) && this.getUserByEmail(user.getEmail()).isPresent()) {
@@ -55,14 +76,15 @@ public class UserService {
         if (StringUtils.isNotBlank(user.getPhone()) && this.getUserByPhone(user.getPhone()).isPresent()) {
             throw new UserAlreadyExistsException(ExType.MOBILE_ALREADY_EXISTS, "user already exists with phone {} " + user.getPhone());
         }
-        if (user.getPassword() != null) user.setPassword(HashUtil.make(user.getPassword()));
-        if (user.getStatus() != null) {
-            user.setStatus(user.getStatus());
-        } else {
-            user.setStatus(User.UserStatus.ACTIVE);
-        }
+        String tempPassword = Generator.generateTemporaryPassword(8);
+        user.setPassword(HashUtil.make(tempPassword));
+        user.setForcePasswordChange(true);
+        user.setStatus(User.UserStatus.PENDING_VERIFICATION);
+
+        userNotificationProxyService.sendEmailWithTemporaryPassword(user.getEmail(),user.getFirstName(),user.getLastName(),tempPassword);
         return userRepository.save(user);
     }
+
     public Optional<User> getUserByPhone(String phone) {
         Optional<User> result = this.userRepository.findFirstByPhone(phone);
         log.info("get user by phone = {}, is available = {}", phone, result.isPresent());
@@ -101,7 +123,12 @@ public class UserService {
             if (StringUtils.isNotEmpty(loginDetails.getPhone())) {
                 errorMessage = "login failed. phone number or password invalid";
             }
-            throw   new UnauthorizeException(errorMessage);
+            throw new UnauthorizeException(errorMessage);
+        }
+
+        if (user.isForcePasswordChange()) {
+            log.warn("User {} is required to change their password", user.getId());
+            throw new UnauthorizeException("Password change required before proceeding.");
         }
 
         if ((userModuleConfigs.isEmailVerificationRequired() && !user.isEmailVerified()) ||
@@ -236,6 +263,7 @@ public class UserService {
         user.getMetaData().remove(UserModuleExtraKeys.RESET_PASSWORD);
         user.getMetaData().remove(UserModuleExtraKeys.EMAIL_TOKEN);
         user.setPassword(HashUtil.make(userDetails.getPassword()));
+        user.setForcePasswordChange(false);
         return this.save(user);
     }
 

@@ -1,7 +1,7 @@
 package com.waterboard.waterqualityprediction.coreExceptions.user;
 
 
-import com.waterboard.waterqualityprediction.coreExceptions.http.BadRequestException;
+import com.waterboard.waterqualityprediction.commonExceptions.http.BadRequestException;
 
 public class UserNotFoundException extends BadRequestException {
     public UserNotFoundException(String message) {

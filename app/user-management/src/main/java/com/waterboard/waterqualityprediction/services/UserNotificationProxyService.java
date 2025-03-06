@@ -25,6 +25,9 @@ public class UserNotificationProxyService {
     @Autowired
     private NotificationModule notificationModule;
 
+    @Autowired
+    private UIConfigs uiConfigs;
+
     public String sendPasswordResetEmailCode(User user) {
         int code = globalAppConfig.isDebugModeOn() ? 55555 : Generator.getRandom5DigitNumber();
         JWTContent content = JWTContent.builder()
@@ -37,7 +40,7 @@ public class UserNotificationProxyService {
                 ))
                 .build();
         String token = JwtUtil.encode(content, globalAppConfig.getSecretKey());
-        log.info("sending password reset code email to user = {}", appStrings.getContactInformation().getSupportedEmail());
+        log.info("sending password reset code email to user = {}", user.getEmail());
         Mail mail = Mail.builder()
                 .htmlTemplate(new Mail.HtmlTemplate("emails/user_password_reset_request_code.html",
                         Map.of("user", user,
@@ -68,4 +71,22 @@ public class UserNotificationProxyService {
         this.notificationModule.sendSmsAsync(new SMSMessage(user.getPhoneWithCountryCode(), message));
         return token;
     }
+
+    public void sendEmailWithTemporaryPassword(String email, String firstName, String lastName, String tempPassword) {
+        log.info("sending temporary password email to user = {}", email);
+        Mail mail = Mail.builder()
+                .htmlTemplate(new Mail.HtmlTemplate("emails/user_temp_password.html",
+                        Map.of("firstName", firstName,
+                                "lastName", lastName,
+                                "email", email,
+                                "tempPassword", tempPassword,
+                                "login_url",uiConfigs.getUiUrl(),
+                                "contactInfo",appStrings.getContactInformation()
+                        )))
+                .to(List.of(new Mail.MailAddress(email)))
+                .subject(appStrings.getString("email-contents.temporary-password.subject"))
+                .build();
+        notificationModule.sendEmailAsync(mail);
+    }
+
 }

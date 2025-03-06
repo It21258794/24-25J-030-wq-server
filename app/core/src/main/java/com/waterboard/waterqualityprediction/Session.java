@@ -1,5 +1,6 @@
 package com.waterboard.waterqualityprediction;
 
+import com.waterboard.waterqualityprediction.commonExceptions.http.AccessDeniedException;
 import com.waterboard.waterqualityprediction.models.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +30,13 @@ public class Session {
 
         Authentication auth = new UsernamePasswordAuthenticationToken(sessionData, null, authorityList);
         SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    public static void throwIfNotSuperAdmin() {
+        if(getUser() != null && !getUser().isSuperAdmin()) {
+            log.error("user does not have super admin access, user = {}.", Session.getUser().getEmail());
+            throw new AccessDeniedException("invalid access level");
+        }
     }
 
 }

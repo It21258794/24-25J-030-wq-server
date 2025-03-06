@@ -60,8 +60,14 @@ public class AppStrings {
     }
 
     public ContactInformation getContactInformation() {
-        return json.read("en.contact-information", ContactInformation.class);
+        try {
+            return json.read("en.contact-information", ContactInformation.class);
+        } catch (Exception e) {
+            log.error("Error reading contact information from JSON", e);
+            return null;
+        }
     }
+
 
     public String getFormattedString(String path, Map<String, Object> vars) {
         return getFormattedString(path, vars, defaultLanguage);
