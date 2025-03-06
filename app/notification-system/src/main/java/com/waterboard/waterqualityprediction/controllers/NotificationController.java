@@ -19,7 +19,7 @@ public class NotificationController {
     @Autowired
     NotificationModule notificationModule;
 
-    @PostMapping("system/send/mail")
+    @PostMapping("/system/send/mail")
     public ResponseEntity<MailDto> sendEmail(@RequestBody MailDto mailDto) {
         mailDto = notificationModule.sendEmail(Mail.init(mailDto));
         return ResponseEntity.ok(mailDto);

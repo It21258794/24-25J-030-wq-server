@@ -1,6 +1,8 @@
 package com.waterboard.waterqualityprediction.Controllers;
 
 import com.waterboard.waterqualityprediction.*;
+import com.waterboard.waterqualityprediction.annotations.LimitPerIP;
+import com.waterboard.waterqualityprediction.annotations.OnlySuperAdmin;
 import com.waterboard.waterqualityprediction.dto.user.PasswordResetTokenDto;
 import com.waterboard.waterqualityprediction.dto.user.UserDto;
 import com.waterboard.waterqualityprediction.dto.user.VerificationDataDto;
@@ -20,8 +22,8 @@ public class UserController {
     @Autowired
     private GlobalAppConfig globalAppConfig;
 
-
     @PostMapping("/login")
+    @LimitPerIP(limit = 10, event = UserModuleEvents.USER_LOGIN_REQUEST)
     public ResponseEntity<UserDto> userLogin(@RequestBody UserDto loginDetails) {
         ResultSet<User> userResultSet = this.userModule.userLogin(User.init(loginDetails));
         SessionData sessionData = new SessionData();
@@ -34,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping("/password-reset/otp")
-//    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_EMAIL_OTP_REQUEST)
+    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_EMAIL_OTP_REQUEST)
     public ResponseEntity sendResetPasswordEmailCode(@RequestBody UserDto emailDetails) {
         ResultSet<User> resultSet = this.userModule.sendUserResetPasswordRequestViaEmail(emailDetails.getEmail());
         return ResponseEntity
@@ -43,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/password-reset/send-otp/sms")
-//    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_MOBILE_OTP_REQUEST)
+    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_EMAIL_TOKEN_REQUEST)
     public ResponseEntity<VerificationDataDto> sendResetPasswordSMS(@RequestBody UserDto phoneDetails,  @RequestHeader(value = "vi-key",required = false) String ketStoreId) {
         ResultSet<User> resultSet = this.userModule.sendUserResetPasswordRequestViaSMS(phoneDetails.getPhone());
         return ResponseEntity
@@ -52,7 +54,7 @@ public class UserController {
     }
 
     @PostMapping("/password-reset/token")
-//    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_OTP_VERIFY_REQUEST)
+    @LimitPerIP(limit = 5, event = UserModuleEvents.USER_OTP_VERIFY_REQUEST)
     public ResponseEntity<PasswordResetTokenDto> createPasswordResetToken(@RequestBody VerificationDataDto verificationDataDto) {
         ResultSet<User> resultSet = this.userModule.resetPasswordTokenFromOTP(verificationDataDto);
         return ResponseEntity.ok(new PasswordResetTokenDto(resultSet.getExtra(UserModuleExtraKeys.RESET_PASSWORD_TOKEN)));
@@ -61,6 +63,13 @@ public class UserController {
     @PostMapping("/password-reset")
     public ResponseEntity<UserDto> resetPassword(@RequestParam("token") String token, @RequestBody UserDto passwordDetails) {
         ResultSet<User> resultSet = this.userModule.resetPassword(User.init(passwordDetails), token);
+        return ResponseEntity.ok(UserDto.init(resultSet.get()));
+    }
+
+    @PostMapping()
+    @OnlySuperAdmin
+    public ResponseEntity<UserDto> createUser(@RequestBody User user) {
+        ResultSet<User> resultSet = this.userModule.createUser(user);
         return ResponseEntity.ok(UserDto.init(resultSet.get()));
     }
 }

@@ -1,7 +1,7 @@
 package com.waterboard.waterqualityprediction;
 
 import com.waterboard.waterqualityprediction.dto.user.VerificationDataDto;
-import com.waterboard.waterqualityprediction.coreExceptions.UnauthorizeException;
+import com.waterboard.waterqualityprediction.commonExceptions.UnauthorizeException;
 import com.waterboard.waterqualityprediction.coreExceptions.user.ExType;
 import com.waterboard.waterqualityprediction.coreExceptions.user.InvalidInputException;
 import com.waterboard.waterqualityprediction.coreExceptions.user.UserNotFoundException;
@@ -33,6 +33,11 @@ public class UserModule {
 
     public ResultSet<User> getUserByEmail(String email) {
         return ResultSet.of(this.userService.getUserByEmail(email));
+    }
+
+    public ResultSet<User> createAdminUser(User user) {
+        ResultSet<User> userResultSet = new ResultSet<>(this.userService.createAdminUser(user));
+        return userResultSet;
     }
 
     public ResultSet<User> createUser(User user) {

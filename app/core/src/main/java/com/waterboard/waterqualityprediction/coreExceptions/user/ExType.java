@@ -1,6 +1,6 @@
 package com.waterboard.waterqualityprediction.coreExceptions.user;
 
-import com.waterboard.waterqualityprediction.coreExceptions.ExceptionType;
+import com.waterboard.waterqualityprediction.commonExceptions.ExceptionType;
 
 public enum ExType implements ExceptionType {
     EMAIL_ALREADY_EXISTS,

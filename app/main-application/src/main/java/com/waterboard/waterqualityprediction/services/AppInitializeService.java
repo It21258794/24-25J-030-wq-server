@@ -36,8 +36,9 @@ public class AppInitializeService {
         user.setPassword(adminInfo.getString("password"));
         user.setEmailVerified(true);
         user.setPhoneVerified(true);
+        user.setForcePasswordChange(false);
         user.setRole(User.UserRoles.SUPER_ADMIN.getRoleName());
-        ResultSet<User> userResultSet = this.userModule.createUser(user);
+        ResultSet<User> userResultSet = this.userModule.createAdminUser(user);
         log.info("default admin created");
     }
 }

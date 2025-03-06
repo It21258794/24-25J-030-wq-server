@@ -52,6 +52,7 @@ public class User extends AuditModel {
     private String phoneWithCountryCode;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    private boolean forcePasswordChange;
     private boolean isPhoneVerified;
     private boolean isEmailVerified;
     private String status;
@@ -65,6 +66,9 @@ public class User extends AuditModel {
 
     @Column(nullable = false)
     private Instant updatedAt;
+
+    @Transient
+    private String Event;
 
     @PrePersist
     protected void onCreate() {
@@ -100,5 +104,21 @@ public class User extends AuditModel {
             }
         }
         set_query(query.toString());
+    }
+
+    @JsonIgnore
+    public boolean isSuperAdmin() {
+        if (getRole() == null) {
+            return false;
+        }
+        return getRole().trim().equals(UserRoles.SUPER_ADMIN.getRoleName());
+    }
+
+    @JsonIgnore
+    public boolean isUser() {
+        if (getRole() == null){
+            return false;
+        }
+        return getRole().trim().equals(UserRoles.USER.getRoleName());
     }
 }

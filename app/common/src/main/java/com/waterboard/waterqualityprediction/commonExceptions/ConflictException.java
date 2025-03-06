@@ -1,6 +1,6 @@
-package com.waterboard.waterqualityprediction.coreExceptions;
+package com.waterboard.waterqualityprediction.commonExceptions;
 
-import com.waterboard.waterqualityprediction.coreExceptions.http.BaseException;
+import com.waterboard.waterqualityprediction.commonExceptions.http.BaseException;
 import org.springframework.http.HttpStatus;
 
 public class ConflictException extends BaseException {
