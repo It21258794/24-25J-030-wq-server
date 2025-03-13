@@ -39,7 +39,7 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/user/login", "/user/password-reset/otp", "/user/password-reset/token", "/user/password-reset")
+                        .requestMatchers("/user/login", "/user/password-reset/otp", "/user/password-reset/token", "/user/password-reset", "/dashboard/ping", "/message")
                         .permitAll()
                         .anyRequest().authenticated()
                 )
