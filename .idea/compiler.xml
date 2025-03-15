@@ -16,15 +16,6 @@
         <module name="water-quality-prediction" />
         <module name="flow-customization" />
       </profile>
-      <profile name="Annotation profile for sensor-management" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
-        </processorPath>
-        <module name="sensor-management" />
-      </profile>
       <profile name="Annotation profile for water-quality-project" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -33,6 +24,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
         </processorPath>
         <module name="main-applicationm" />
+        <module name="sensor-management" />
       </profile>
     </annotationProcessing>
   </component>

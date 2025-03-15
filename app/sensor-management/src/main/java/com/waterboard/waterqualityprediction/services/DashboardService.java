@@ -1,4 +1,4 @@
-package com.waterboard.sensormanagment.services;
+package com.waterboard.waterqualityprediction.services;
 
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadMultipleRegistersRequest;
@@ -24,18 +24,20 @@ public class DashboardService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    // Run periodically (every 5 seconds for example)
     @Scheduled(fixedRate = 5000)
-    public void fetchModbusData() {
+    public List<Integer> fetchModbusData() {
         try {
-            List<Integer> registerValues = readHoldingRegisters(0, 10); // Read from address 0 with 10 registers
+            List<Integer> registerValues = readHoldingRegisters(0, 10);
             if (!registerValues.isEmpty()) {
-                // Send the data to WebSocket clients on the "/topic/registerData"
+                log.info("Fetched register values: {}", registerValues); // Log the values
                 messagingTemplate.convertAndSend("/topic/registerData", registerValues);
+            } else {
+                log.warn("No data received from Modbus server");
             }
         } catch (Exception e) {
             log.error("Error while fetching Modbus data", e);
         }
+        return null;
     }
 
     public List<Integer> readHoldingRegisters(int startAddress, int quantity) throws Exception {
@@ -48,12 +50,16 @@ public class DashboardService {
             connection.setPort(MODBUS_PORT);
             connection.connect();
 
+            log.info("Connected to Modbus server at {}:{}", MODBUS_IP, MODBUS_PORT);
+
             ReadMultipleRegistersRequest request = new ReadMultipleRegistersRequest(startAddress, quantity);
             ModbusTCPTransaction transaction = new ModbusTCPTransaction(connection);
             transaction.setRequest(request);
             transaction.execute();
 
             ReadMultipleRegistersResponse response = (ReadMultipleRegistersResponse) transaction.getResponse();
+            log.info("Received response with {} registers", response.getWordCount());
+
             for (int i = 0; i < response.getWordCount(); i++) {
                 registerValues.add(response.getRegister(i).getValue());
             }
@@ -66,4 +72,5 @@ public class DashboardService {
         return registerValues;
     }
 }
+
 
