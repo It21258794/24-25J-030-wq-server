@@ -13,6 +13,9 @@ public class UIConfigs {
     @Value("${ui.url}")
     private String uiUrl;
 
+    @Value("${ui.links.prediction}")
+    private String predictionUrl;
+
     @Value("${ui.links.login}")
     private String loginUrl;
 

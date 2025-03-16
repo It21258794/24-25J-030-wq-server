@@ -39,6 +39,7 @@ public class User extends AuditModel {
         public static final String INACTIVE = "INACTIVE";
         public static final String PENDING_VERIFICATION = "PENDING_VERIFICATION";
         public static final String TO_DELETE = "TO_DELETE";
+        public static final String REMOVED = "REMOVED";
     }
 
     @Id
@@ -70,6 +71,9 @@ public class User extends AuditModel {
     @Transient
     private String Event;
 
+    @Transient
+    private String currentPassword;
+
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
@@ -93,6 +97,12 @@ public class User extends AuditModel {
         u.setPhoneCountryCode(userDTO.getPhoneCountryCode());
         u.setPhoneWithCountryCode(userDTO.getPhoneCountryCode() + userDTO.getPhone());
         return u;
+    }
+
+    public static User initWithTepPassword(UserDto userDTO) {
+        User userTemp = User.init(userDTO);
+        userTemp.setCurrentPassword(userDTO.getCurrentPassword());
+        return userTemp;
     }
 
     @JsonIgnore
@@ -121,4 +131,5 @@ public class User extends AuditModel {
         }
         return getRole().trim().equals(UserRoles.USER.getRoleName());
     }
+
 }

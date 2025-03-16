@@ -47,12 +47,14 @@ public class UserDto{
 
     private boolean isPhoneVerified;
     private boolean isEmailVerified;
-
+    private String role;
     @NotNull(message = "status cannot be null")
     @NotBlank(message = "status cannot be blank")
     private String status;
     private Instant createdAt;
     private Instant updatedAt;
+    private String phoneWithCountryCode;
+    private String currentPassword;
 
     public static UserDto initBasicDetails(User user) {
         UserDto dto = new UserDto();
@@ -65,8 +67,13 @@ public class UserDto{
         dto.setPhoneCountryCode(user.getPhoneCountryCode());
         dto.setEmailVerified(user.isEmailVerified());
         dto.setPhoneVerified(user.isPhoneVerified());
+        dto.setRole(user.getRole());
+        dto.setPhoneWithCountryCode(user.getPhoneWithCountryCode());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setUpdatedAt(user.getUpdatedAt());
+        if(user.getCurrentPassword() != null){
+            dto.setCurrentPassword(user.getCurrentPassword());
+        }
         return dto;
     }
 
