@@ -2,6 +2,8 @@ package com.waterboard.waterqualityprediction;
 
 import org.apache.commons.lang3.RandomUtils;
 
+import java.util.UUID;
+
 public class Generator {
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$!";
 
@@ -16,5 +18,9 @@ public class Generator {
             password.append(ALPHABET.charAt(index));
         }
         return password.toString();
+    }
+
+    public static String getUUID() {
+        return UUID.randomUUID().toString();
     }
 }

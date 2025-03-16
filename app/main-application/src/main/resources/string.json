@@ -12,6 +12,10 @@
       "temporary-password" : {
         "subject" : "WQ Pred : Your account has been created",
         "body" : "Your account has been created"
+      },
+      "account-activation" : {
+        "subject" : "WQ Pred : Your account has been activated",
+        "body" : "Your account has been activated"
       }
     },
     "contact-information":{

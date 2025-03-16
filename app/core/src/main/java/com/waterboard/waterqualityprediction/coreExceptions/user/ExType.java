@@ -59,7 +59,10 @@ public enum ExType implements ExceptionType {
     INVALID_PACKAGE_PAYMENT_TYPE,
     INVALID_TEAM_STATUS,
     INCORRECT_OTP_CODE,
-    INVALID_USER_ACCOUNT;
+    INVALID_USER_ACCOUNT,
+    TEMP_USER_ACCOUNT,
+    DEACTIVATED_USER,
+    REMOVED_USER;
 
     @Override
     public String getType() {
