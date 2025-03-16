@@ -1,7 +1,7 @@
 package com.waterboard.waterqualityprediction.filters;
 
-import com.waterboard.waterqualityprediction.coreExceptions.http.BaseException;
-import com.waterboard.waterqualityprediction.coreExceptions.http.InternalErrorException;
+import com.waterboard.waterqualityprediction.commonExceptions.http.BaseException;
+import com.waterboard.waterqualityprediction.commonExceptions.http.InternalErrorException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,12 +20,12 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         } catch (BaseException exp) {
             exp.printStackTrace();
             log.error("exception occurred error = {}", exp.getMessage());
-            setErrorResponse((HttpServletResponse) response, exp);
+            setErrorResponse(response, exp);
         } catch (Exception exp) {
             exp.printStackTrace();
             log.error("exception occurred error = {}", exp.getMessage());
             BaseException exception = new InternalErrorException(exp.getMessage());
-            this.setErrorResponse((HttpServletResponse) response, exception);
+            this.setErrorResponse(response, exception);
         }
     }
 

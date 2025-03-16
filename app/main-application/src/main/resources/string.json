@@ -8,6 +8,14 @@
       "reset-password" : {
         "subject" : "WQ Pred : Reset Your Password",
         "body" : "We have received a request to reset your password.Please follow below link to reset your password."
+      },
+      "temporary-password" : {
+        "subject" : "WQ Pred : Your account has been created",
+        "body" : "Your account has been created"
+      },
+      "account-activation" : {
+        "subject" : "WQ Pred : Your account has been activated",
+        "body" : "Your account has been activated"
       }
     },
     "contact-information":{

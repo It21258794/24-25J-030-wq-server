@@ -1,7 +1,7 @@
 package com.waterboard.waterqualityprediction.filters;
 
-import com.waterboard.waterqualityprediction.coreExceptions.ExType;
-import com.waterboard.waterqualityprediction.coreExceptions.UnauthorizeException;
+import com.waterboard.waterqualityprediction.commonExceptions.ExType;
+import com.waterboard.waterqualityprediction.commonExceptions.UnauthorizeException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class JWTAuthEntryHandler implements AuthenticationEntryPoint {
     @Override
-    public void commence(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, AuthenticationException authException) throws IOException, jakarta.servlet.ServletException {
+    public void commence(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, AuthenticationException e) throws IOException, jakarta.servlet.ServletException {
         final boolean isExpired = request.getAttribute("tok-expired") != null;
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

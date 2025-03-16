@@ -39,6 +39,7 @@ public class User extends AuditModel {
         public static final String INACTIVE = "INACTIVE";
         public static final String PENDING_VERIFICATION = "PENDING_VERIFICATION";
         public static final String TO_DELETE = "TO_DELETE";
+        public static final String REMOVED = "REMOVED";
     }
 
     @Id
@@ -52,6 +53,7 @@ public class User extends AuditModel {
     private String phoneWithCountryCode;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    private boolean forcePasswordChange;
     private boolean isPhoneVerified;
     private boolean isEmailVerified;
     private String status;
@@ -65,6 +67,12 @@ public class User extends AuditModel {
 
     @Column(nullable = false)
     private Instant updatedAt;
+
+    @Transient
+    private String Event;
+
+    @Transient
+    private String currentPassword;
 
     @PrePersist
     protected void onCreate() {
@@ -91,6 +99,12 @@ public class User extends AuditModel {
         return u;
     }
 
+    public static User initWithTepPassword(UserDto userDTO) {
+        User userTemp = User.init(userDTO);
+        userTemp.setCurrentPassword(userDTO.getCurrentPassword());
+        return userTemp;
+    }
+
     @JsonIgnore
     public void updateQuery(String... values) {
         StringBuilder query = new StringBuilder();
@@ -101,4 +115,21 @@ public class User extends AuditModel {
         }
         set_query(query.toString());
     }
+
+    @JsonIgnore
+    public boolean isSuperAdmin() {
+        if (getRole() == null) {
+            return false;
+        }
+        return getRole().trim().equals(UserRoles.SUPER_ADMIN.getRoleName());
+    }
+
+    @JsonIgnore
+    public boolean isUser() {
+        if (getRole() == null){
+            return false;
+        }
+        return getRole().trim().equals(UserRoles.USER.getRoleName());
+    }
+
 }

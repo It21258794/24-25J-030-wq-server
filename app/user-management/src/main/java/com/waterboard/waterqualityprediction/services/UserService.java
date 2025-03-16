@@ -1,14 +1,22 @@
 package com.waterboard.waterqualityprediction.services;
 
 import com.waterboard.waterqualityprediction.*;
-import com.waterboard.waterqualityprediction.coreExceptions.UnauthorizeException;
+import com.waterboard.waterqualityprediction.commonExceptions.UnauthorizeException;
 import com.waterboard.waterqualityprediction.coreExceptions.user.*;
+import com.waterboard.waterqualityprediction.dto.user.UserDto;
+import com.waterboard.waterqualityprediction.dto.user.UserSpecification;
 import com.waterboard.waterqualityprediction.models.user.User;
 import com.waterboard.waterqualityprediction.repository.UserRepository;
+import com.waterboard.waterqualityprediction.tests.TestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,6 +37,8 @@ public class UserService {
 
     @Autowired
     private GlobalAppConfig globalAppConfig;
+    @Autowired
+    private UserNotificationProxyService userNotificationProxyService;
 
     public User save(User user){
         user.set_query("");
@@ -47,6 +57,25 @@ public class UserService {
         return result;
     }
 
+    public User createAdminUser(User user) {
+        log.info("create user = {}", JsonUtils.objectToString(user));
+        if (StringUtils.isNotBlank(user.getEmail()) && this.getUserByEmail(user.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException(ExType.EMAIL_ALREADY_EXISTS, "user already exists with email {}" + user.getEmail());
+        }
+        if (StringUtils.isNotBlank(user.getPhone()) && this.getUserByPhone(user.getPhone()).isPresent()) {
+            throw new UserAlreadyExistsException(ExType.MOBILE_ALREADY_EXISTS, "user already exists with phone {} " + user.getPhone());
+        }
+        if (user.getPassword() != null){
+            user.setPassword(HashUtil.make(user.getPassword()));
+        }
+        if (user.getStatus() != null) {
+            user.setStatus(user.getStatus());
+        } else {
+            user.setStatus(User.UserStatus.ACTIVE);
+        }
+        return userRepository.save(user);
+    }
+
     public User createUser(User user) {
         log.info("create user = {}", JsonUtils.objectToString(user));
         if (StringUtils.isNotBlank(user.getEmail()) && this.getUserByEmail(user.getEmail()).isPresent()) {
@@ -55,14 +84,22 @@ public class UserService {
         if (StringUtils.isNotBlank(user.getPhone()) && this.getUserByPhone(user.getPhone()).isPresent()) {
             throw new UserAlreadyExistsException(ExType.MOBILE_ALREADY_EXISTS, "user already exists with phone {} " + user.getPhone());
         }
-        if (user.getPassword() != null) user.setPassword(HashUtil.make(user.getPassword()));
-        if (user.getStatus() != null) {
-            user.setStatus(user.getStatus());
-        } else {
-            user.setStatus(User.UserStatus.ACTIVE);
+        String tempPassword = Generator.generateTemporaryPassword(8);
+        if(globalAppConfig.isDebugModeOn()){
+            user.setCurrentPassword(tempPassword);
+        }
+        user.setPassword(HashUtil.make(tempPassword));
+        user.setForcePasswordChange(true);
+        user.setStatus(User.UserStatus.PENDING_VERIFICATION);
+        user.setPhoneWithCountryCode(user.getPhoneCountryCode()+" "+user.getPhone());
+
+        userNotificationProxyService.sendEmailWithTemporaryPassword(user.getEmail(),user.getFirstName(),user.getLastName(),tempPassword);
+        if(globalAppConfig.isDebugModeOn()){
+            user.setCurrentPassword(tempPassword);
         }
         return userRepository.save(user);
     }
+
     public Optional<User> getUserByPhone(String phone) {
         Optional<User> result = this.userRepository.findFirstByPhone(phone);
         log.info("get user by phone = {}, is available = {}", phone, result.isPresent());
@@ -91,17 +128,28 @@ public class UserService {
             userResult = this.findUserByPhoneWithCountryCodeAndStatus(loginDetails.getPhone(),List.of(User.UserStatus.ACTIVE, User.UserStatus.PENDING_VERIFICATION));
         }
         if (userResult.isEmpty()) {
-            log.error("login failed. user not found for email = {} or phone = {}", loginDetails.getEmail(), loginDetails.getPhone());
+            log.error("login failed. user not found for email = {}", loginDetails.getEmail());
             throw new UnauthorizeException("login failed. email/phone or password invalid");
+        }
+
+        if(userResult.get().getStatus().equals(User.UserStatus.INACTIVE)){
+            log.error("login failed. user Account has been deactivated email = {}", loginDetails.getEmail());
+            throw new UnauthorizeException(ExType.DEACTIVATED_USER,"login failed. Account has been deactivated");
+        }
+        if(userResult.get().getStatus().equals(User.UserStatus.REMOVED)){
+            log.error("login failed. user Account has been removed email = {}", loginDetails.getEmail());
+            throw new UnauthorizeException(ExType.REMOVED_USER,"login failed. Account has been Removed");
         }
         User user = userResult.get();
 
         if (!HashUtil.match(loginDetails.getPassword(), user.getPassword())) {
             String errorMessage = "login failed. email or password invalid";
-            if (StringUtils.isNotEmpty(loginDetails.getPhone())) {
-                errorMessage = "login failed. phone number or password invalid";
-            }
-            throw   new UnauthorizeException(errorMessage);
+            throw new UnauthorizeException(errorMessage);
+        }
+
+        if (user.isForcePasswordChange()) {
+            log.warn("User {} is required to change their password", user.getId());
+            throw new UnauthorizeException(ExType.TEMP_USER_ACCOUNT,"Password change required before proceeding.");
         }
 
         if ((userModuleConfigs.isEmailVerificationRequired() && !user.isEmailVerified()) ||
@@ -243,5 +291,70 @@ public class UserService {
         Optional<User> result = this.userRepository.findFirstByPhoneWithCountryCode(phone);
         log.debug("get user by phone = {}, is available = {}", phone, result.isPresent());
         return result;
+    }
+
+    public Page<UserDto> searchUsers(String query, String firstName, String lastName, String email, String phone, String role, String status, String startDate, String endDate, int page, int size, String sortDirection, String sessionUserEmail){
+        log.info("search application by query {} firstName {}", query, firstName);
+        Specification<User> spec =Specification.where(UserSpecification.hasFirstName(firstName))
+                .and(UserSpecification.hasLastName(lastName))
+                .and(UserSpecification.hasEmail(email))
+                .and(UserSpecification.hasPhone(phone))
+                .and(UserSpecification.hasRole(role))
+                .and(UserSpecification.hasStatus(status))
+                .and(UserSpecification.hasQuery(query))
+                .and(UserSpecification.hasUpdatedAtBetween(startDate, endDate))
+                .and(UserSpecification.isNotSessionUser(sessionUserEmail));
+
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "updatedAt"));
+
+        Page<User> userPages = userRepository.findAll(spec, pageable);
+        return userPages.map(UserDto::init);
+    }
+
+    public User changeTempPassword(User userDetails) {
+        log.info("user password change email = {}", userDetails.getEmail());
+        if (StringUtils.isEmpty(userDetails.getPassword()) || StringUtils.isAllBlank(userDetails.getEmail()) || StringUtils.isAllBlank(userDetails.getCurrentPassword())) {
+            log.error("password change failed. email or password empty. email = {}, password = {}, temp password = {}", userDetails.getEmail(), userDetails.getPassword(), userDetails.getCurrentPassword());
+            throw new UnauthorizeException("password change failed. email/phone or password empty");
+        }
+        Optional<User> userResult = Optional.empty();
+        if (StringUtils.isNotEmpty(userDetails.getEmail())) {
+            log.info("get user with email = {}", userDetails.getEmail());
+            userResult = this.findUserByEmailAndStatus(userDetails.getEmail(), List.of(User.UserStatus.ACTIVE,User.UserStatus.PENDING_VERIFICATION));
+        }
+
+        if (userResult.isEmpty()) {
+            log.error("password change failed. user not found for email = {}", userDetails.getEmail());
+            throw new UnauthorizeException("User  not found for email");
+        }
+        User user = userResult.get();
+
+        if (!HashUtil.match(userDetails.getCurrentPassword(), user.getPassword())) {
+            String errorMessage = "password change failed. email or temp password invalid";
+            throw new UnauthorizeException(errorMessage);
+        }
+
+        user.setPassword(HashUtil.make(userDetails.getPassword()));
+        user.setStatus(User.UserStatus.ACTIVE);
+        user.setForcePasswordChange(false);
+        userNotificationProxyService.sendAccountActivateEmail(user);
+        return this.save(user);
+    }
+
+    public User changeUserPasswordByAdmin(String id, String status) {
+        log.info("user status changed by admin of user id {}", id);
+
+        Optional <User> user = this.getUserById(id);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("user not found {}"+id);
+        }
+
+        if(user.get().getStatus().equals(status)) {
+            log.error("user already in {} status", status);
+        }
+
+        user.get().setStatus(status);
+        return userRepository.save(user.get());
     }
 }

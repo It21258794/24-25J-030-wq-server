@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Setter
 @Getter
 public class GlobalAppConfig {
-    @Value("${global.is_debug:true}")
-    private boolean isDebugModeOn = true;
+    @Value("${global.is_debug:false}")
+    private boolean isDebugModeOn = false;
 
     @Value("${global.secret_key:103ur0wjf012u30ru130tr03tf}")
     private String secretKey = "103ur0wjf012u30ru130tr03tf";
