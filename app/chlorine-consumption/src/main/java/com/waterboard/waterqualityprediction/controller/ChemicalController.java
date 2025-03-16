@@ -1,30 +1,22 @@
 package com.waterboard.waterqualityprediction.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
 
-
 @RestController
-@RequestMapping("/api")
+@RequestMapping()
 public class ChemicalController {
 
     private final WebClient webClient = WebClient.create("http://localhost:5000");
-    private final StandardServletMultipartResolver standardServletMultipartResolver;
-
-    public ChemicalController(StandardServletMultipartResolver standardServletMultipartResolver) {
-        this.standardServletMultipartResolver = standardServletMultipartResolver;
-    }
 
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/predict")
     public Mono<ResponseEntity<String>> getPrediction() {
-        System.out.println("getPrediction");
         // Step 1: Fetch data from Flask `/dailyusage`
         return webClient.get()
                 .uri("/dailyusage")
@@ -44,7 +36,7 @@ public class ChemicalController {
                 .map(response -> ResponseEntity.ok().body(response));
     }
 
-//    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/lastdaysusages")
     public Mono<ResponseEntity<String>> getLastUsage() {
         // Step 1: Fetch data from Flask `/dailyusage`
@@ -52,6 +44,7 @@ public class ChemicalController {
                 .uri("/lastusage")
                 .retrieve()
                 .bodyToMono(String.class)
+                .retry(3)
                 .map(response -> ResponseEntity.ok().body(response));
     }
 }
