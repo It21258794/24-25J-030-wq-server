@@ -19,7 +19,7 @@ public class NotificationModuleConfigs {
     @Value("${notification.redirect:false}")
     private boolean notificationRedirect;
 
-    @Value("${notification.redirect_email:kaveeshakarunasena@gmail.com}")
+    @Value("${notification.redirect_email:kaveeshalankeshwara2001@gmail.com}")
     private String notificationRedirectEmail;
 
     @Value("${notification.redirect_phone:null}")

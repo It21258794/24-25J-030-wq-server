@@ -1,5 +1,6 @@
 package com.waterboard.waterqualityprediction;
 
+import com.waterboard.waterqualityprediction.dto.user.UserDto;
 import com.waterboard.waterqualityprediction.dto.user.VerificationDataDto;
 import com.waterboard.waterqualityprediction.commonExceptions.UnauthorizeException;
 import com.waterboard.waterqualityprediction.coreExceptions.user.ExType;
@@ -11,6 +12,7 @@ import com.waterboard.waterqualityprediction.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -121,5 +123,19 @@ public class UserModule {
         String token = this.userNotificationProxyService.sendPasswordResetSMS(updatedUser);
         resultSet.addExtra(UserModuleExtraKeys.WEB_SERVER_REF, token);
         return resultSet;
+    }
+
+    public Page<UserDto> getUsersBySearch(String query, String firstName, String lastName, String email, String phone, String role, String status, String startDate, String endDate, int page, int size, String sortDirection, String sessionUserEmail){
+        return userService.searchUsers(query, firstName, lastName, email, phone, role, status, startDate, endDate, page, size, sortDirection, sessionUserEmail);
+    }
+
+    public ResultSet<User> changePassword(User userDetails) {
+        User user = this.userService.changeTempPassword(userDetails);
+        return new ResultSet<>(user);
+    }
+
+    public ResultSet<User> changeUserStatus(String id, String status) {
+        User user = this.userService.changeUserPasswordByAdmin(id,status);
+        return new ResultSet<>(user);
     }
 }

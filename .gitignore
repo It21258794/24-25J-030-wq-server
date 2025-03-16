@@ -31,7 +31,7 @@ application.yml
 
 # Ignore all .jar files
 *.jar
-
+*.adoc
 # Optionally, exclude specific directories
 /target/
 /build/
