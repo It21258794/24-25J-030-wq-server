@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 @Setter
 public class UserModuleConfigs {
     @Value("${user.email_verification_required:true}")
-    private boolean emailVerificationRequired = true;
+    private boolean emailVerificationRequired = false;
 
     @Value("${user.phone_verification_required:true}")
-    private boolean phoneVerificationRequired = true;
+    private boolean phoneVerificationRequired = false;
 
     @Value("${user.token_exp_time_web:1}")
     private int tokenExpireTime;
