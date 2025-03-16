@@ -14,6 +14,6 @@ public class ContactInformation {
     String termsAndConditions;
     String contactNumber;
     String supportCenter;
-    String supportedEmail;
+    String supportEmail;
 }
 

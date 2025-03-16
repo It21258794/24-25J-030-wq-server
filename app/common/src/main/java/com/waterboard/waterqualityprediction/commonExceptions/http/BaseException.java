@@ -1,7 +1,7 @@
-package com.waterboard.waterqualityprediction.coreExceptions.http;
+package com.waterboard.waterqualityprediction.commonExceptions.http;
 
 import com.waterboard.waterqualityprediction.JsonUtils;
-import com.waterboard.waterqualityprediction.coreExceptions.ExceptionType;
+import com.waterboard.waterqualityprediction.commonExceptions.ExceptionType;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.simple.JSONObject;

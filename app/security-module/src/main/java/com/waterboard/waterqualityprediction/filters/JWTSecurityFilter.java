@@ -2,7 +2,7 @@ package com.waterboard.waterqualityprediction.filters;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.waterboard.waterqualityprediction.*;
-import com.waterboard.waterqualityprediction.coreExceptions.UnauthorizeException;
+import com.waterboard.waterqualityprediction.commonExceptions.UnauthorizeException;
 import com.waterboard.waterqualityprediction.models.user.User;
 import com.waterboard.waterqualityprediction.services.UserService;
 import jakarta.servlet.FilterChain;
@@ -34,8 +34,7 @@ public class JWTSecurityFilter extends BasicAuthenticationFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         MDC.put("request_unique_id", "[" + requestContextManager.getRequestHash() + "]");
 

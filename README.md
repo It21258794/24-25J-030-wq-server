@@ -160,5 +160,13 @@ mvn spring-boot:run
 >- new modules called common and core added for better moduleraization
 >- fix(pom): build fail issue fixed, pom.xml files updated
 
+> [!TIP]
+> https://github.com/It21258794/24-25J-030-wq-server/pull/25
+>
+> feat(user-management): create user flow implemented with sending notifications
+>- user create flow implemented with notification triggering
+>- new Exception add with hash code
+>- email templates add for newly created user
+
 
 
