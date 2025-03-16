@@ -89,4 +89,18 @@ public class UserNotificationProxyService {
         notificationModule.sendEmailAsync(mail);
     }
 
+    public void sendAccountActivateEmail(User user) {
+        log.info("sending temporary password email to user = {}", user.getEmail());
+        Mail mail = Mail.builder()
+                .htmlTemplate(new Mail.HtmlTemplate("emails/user_activation.html",
+                        Map.of("user",user,
+                                "login_url",uiConfigs.getUiUrl(),
+                                "contactInfo",appStrings.getContactInformation()
+                        )))
+                .to(List.of(new Mail.MailAddress(user.getEmail())))
+                .subject(appStrings.getString("email-contents.account-activation.subject"))
+                .build();
+        notificationModule.sendEmailAsync(mail);
+    }
+
 }

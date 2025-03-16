@@ -9,6 +9,7 @@ import com.waterboard.waterqualityprediction.dto.user.VerificationDataDto;
 import com.waterboard.waterqualityprediction.models.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,10 +67,42 @@ public class UserController {
         return ResponseEntity.ok(UserDto.init(resultSet.get()));
     }
 
+    @PostMapping("/password-change")
+    public ResponseEntity<UserDto> changePassword(@RequestBody UserDto passwordDetails) {
+        ResultSet<User> resultSet = this.userModule.changePassword(User.initWithTepPassword(passwordDetails));
+        return ResponseEntity.ok(UserDto.init(resultSet.get()));
+    }
+
     @PostMapping()
     @OnlySuperAdmin
     public ResponseEntity<UserDto> createUser(@RequestBody User user) {
         ResultSet<User> resultSet = this.userModule.createUser(user);
+        return ResponseEntity.ok(UserDto.init(resultSet.get()));
+    }
+
+    @GetMapping("/users")
+    @OnlySuperAdmin
+    public Page<UserDto> getUsers(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "DESC") String sortDirection
+    ){
+        return userModule.getUsersBySearch(query,firstName,lastName,email,phone,role,status,startDate,endDate,page,size, sortDirection, Session.getUser().getEmail());
+    }
+
+    @OnlySuperAdmin
+    @PostMapping("/status-change/{id}/{status}")
+    public ResponseEntity<UserDto> changeUserStatusAdmin(@PathVariable("id") String id, @PathVariable("status") String status) {
+        ResultSet<User> resultSet = this.userModule.changeUserStatus(id,status);
         return ResponseEntity.ok(UserDto.init(resultSet.get()));
     }
 }

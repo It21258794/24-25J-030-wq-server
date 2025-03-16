@@ -2,11 +2,12 @@ package com.waterboard.waterqualityprediction.repository;
 
 import com.waterboard.waterqualityprediction.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
     Optional<User> findFirstByEmail(String email);
 
     Optional<User> findFirstByPhone(String phone);
