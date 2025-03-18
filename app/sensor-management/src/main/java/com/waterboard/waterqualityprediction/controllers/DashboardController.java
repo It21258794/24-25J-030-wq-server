@@ -1,13 +1,16 @@
 package com.waterboard.waterqualityprediction.controllers;
 
 import com.waterboard.waterqualityprediction.models.DashboardConfiguration;
+import com.waterboard.waterqualityprediction.models.TagValue;
 import com.waterboard.waterqualityprediction.services.DashboardConfigurationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.waterboard.waterqualityprediction.services.DashboardService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -22,14 +25,8 @@ public class DashboardController {
         this.dashboardConfigurationService = dashboardConfigurationService;
     }
 
-    @GetMapping("/ping")
-    public String testEndpoint() {
-        return "🚀 Modbus Service Works!";
-    }
-
-
     @GetMapping("/fetchModbusData")
-    public List<Integer> fetchModbusData() {
+    public Map<Integer, Float> fetchModbusData() {
         return dashboardService.fetchModbusData();
     }
 

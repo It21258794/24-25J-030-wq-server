@@ -21,7 +21,14 @@ public class DashboardConfiguration {
     private boolean conductivityGraph;
     private boolean chart;
     private boolean totalAnalysis;
-
+    private boolean totalTreatedAnalysis;
+    private boolean treatedChart;
+    private boolean limeUsageChart;
+    private boolean pacChart;
+    private boolean chlorineUsageChart;
+    private boolean limeUsage;
+    private boolean pacUsage;
+    private boolean chlorineUsage;
 
     public boolean isTurbidity() {
         return turbidity;
@@ -87,6 +94,70 @@ public class DashboardConfiguration {
         this.totalAnalysis = totalAnalysis;
     }
 
+    public boolean isTotalTreatedAnalysis() {
+        return totalTreatedAnalysis;
+    }
+
+    public void setTotalTreatedAnalysis(boolean totalTreatedAnalysis) {
+        this.totalTreatedAnalysis = totalTreatedAnalysis;
+    }
+
+    public boolean isTreatedChart() {
+        return treatedChart;
+    }
+
+    public void setTreatedChart(boolean treatedChart) {
+        this.treatedChart = treatedChart;
+    }
+
+    public boolean isLimeUsageChart() {
+        return limeUsageChart;
+    }
+
+    public void setLimeUsageChart(boolean limeUsageChart) {
+        this.limeUsageChart = limeUsageChart;
+    }
+
+    public boolean isPacChart() {
+        return pacChart;
+    }
+
+    public void setPacChart(boolean pacChart) {
+        this.pacChart = pacChart;
+    }
+
+    public boolean isChlorineUsageChart() {
+        return chlorineUsageChart;
+    }
+
+    public void setChlorineUsageChart(boolean chlorineUsageChart) {
+        this.chlorineUsageChart = chlorineUsageChart;
+    }
+
+    public boolean isLimeUsage() {
+        return limeUsage;
+    }
+
+    public void setLimeUsage(boolean limeUsage) {
+        this.limeUsage = limeUsage;
+    }
+
+    public boolean isPacUsage() {
+        return pacUsage;
+    }
+
+    public void setPacUsage(boolean pacUsage) {
+        this.pacUsage = pacUsage;
+    }
+
+    public boolean isChlorineUsage() {
+        return chlorineUsage;
+    }
+
+    public void setChlorineUsage(boolean chlorineUsage) {
+        this.chlorineUsage = chlorineUsage;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -102,5 +173,4 @@ public class DashboardConfiguration {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
 }
