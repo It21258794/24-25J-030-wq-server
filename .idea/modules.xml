@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/24-25J-030-wq-server.iml" filepath="$PROJECT_DIR$/.idea/24-25J-030-wq-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/water-quality-prediction/water-quality-prediction.iml" filepath="$PROJECT_DIR$/app/water-quality-prediction/water-quality-prediction.iml" />
     </modules>
   </component>
 </project>

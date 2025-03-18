@@ -342,7 +342,7 @@ public class UserService {
         return this.save(user);
     }
 
-    public User changeUserPasswordByAdmin(String id, String status) {
+    public User changeUserStatusByAdmin(String id, String status) {
         log.info("user status changed by admin of user id {}", id);
 
         Optional <User> user = this.getUserById(id);
@@ -355,6 +355,17 @@ public class UserService {
         }
 
         user.get().setStatus(status);
+        return userRepository.save(user.get());
+    }
+
+    public User updateProfile(UserDto userDto) {
+        log.info("user update profile {}", userDto.getEmail());
+        Optional<User> user = this.getUserByEmail(userDto.getEmail());
+        user.get().setEmail(userDto.getEmail());
+        user.get().setPhone(userDto.getPhone());
+        user.get().setFirstName(userDto.getFirstName());
+        user.get().setLastName(userDto.getLastName());
+
         return userRepository.save(user.get());
     }
 }

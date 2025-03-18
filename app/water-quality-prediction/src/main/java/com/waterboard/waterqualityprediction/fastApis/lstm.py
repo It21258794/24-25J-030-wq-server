@@ -8,9 +8,6 @@ from typing import Optional
 
 app = FastAPI()
 
-
-
-# Preprocessing function (same as used earlier)
 def preprocess_data(df, targets=['PH', 'Conductivity', 'Turbidity'], sequence_length=5):
     dropped_columns = ['visibility', 'humidity', 'wind_speed', 'clouds', 'feels_like', 'pressure', 'dew_point', 'wind_deg']
     df = df.drop(columns=dropped_columns, errors='ignore')
@@ -75,14 +72,11 @@ def preprocess_data(df, targets=['PH', 'Conductivity', 'Turbidity'], sequence_le
     return X_test, y_test, target_scaler
 
 
-# Load LSTM model
 lstm_model = keras.models.load_model('com/waterboard/waterqualityprediction/mlModels/lag_lstm_water_quality.keras')  # Change to the correct path
 
 def get_future_dates(start_date, days_ahead):
     future_dates = [start_date + timedelta(days=i) for i in range(1, days_ahead + 1)]
     return [date.strftime('%Y-%m-%d') for date in future_dates]
-
-
 
 
 @app.post("/predict")

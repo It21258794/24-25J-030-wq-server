@@ -73,10 +73,28 @@ public class UserController {
         return ResponseEntity.ok(UserDto.init(resultSet.get()));
     }
 
+    @PostMapping("/current/password-change")
+    public ResponseEntity<UserDto> changeCurrentPassword(@RequestBody UserDto passwordDetails) {
+        ResultSet<User> resultSet = this.userModule.changePassword(User.initWithTepPassword(passwordDetails));
+        return ResponseEntity.ok(UserDto.init(resultSet.get()));
+    }
+
+    @PostMapping("/profile")
+    public ResponseEntity<UserDto> updateProfile(@RequestBody UserDto user) {
+        ResultSet<User> resultSet = this.userModule.updateProfile(user);
+        return ResponseEntity.ok(UserDto.init(resultSet.get()));
+    }
+
     @PostMapping()
     @OnlySuperAdmin
     public ResponseEntity<UserDto> createUser(@RequestBody User user) {
         ResultSet<User> resultSet = this.userModule.createUser(user);
+        return ResponseEntity.ok(UserDto.init(resultSet.get()));
+    }
+
+    @GetMapping()
+    public ResponseEntity<UserDto> getUser() {
+        ResultSet<User> resultSet = this.userModule.getUser(Session.getUser());
         return ResponseEntity.ok(UserDto.init(resultSet.get()));
     }
 
@@ -99,7 +117,7 @@ public class UserController {
         return userModule.getUsersBySearch(query,firstName,lastName,email,phone,role,status,startDate,endDate,page,size, sortDirection, Session.getUser().getEmail());
     }
 
-    @OnlySuperAdmin
+        
     @PostMapping("/status-change/{id}/{status}")
     public ResponseEntity<UserDto> changeUserStatusAdmin(@PathVariable("id") String id, @PathVariable("status") String status) {
         ResultSet<User> resultSet = this.userModule.changeUserStatus(id,status);
