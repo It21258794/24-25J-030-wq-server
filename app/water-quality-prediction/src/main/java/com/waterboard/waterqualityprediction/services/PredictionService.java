@@ -229,7 +229,7 @@ public class PredictionService {
 
         Pageable pageable = PageRequest.of(page, size);
         Instant today = Instant.now();
-        Instant sevenDaysLater = today.plus(7, ChronoUnit.DAYS);
+        Instant sevenDaysLater = today.plus(predictionModuleConfig.getPredictionDays(), ChronoUnit.DAYS);
 
         Page<WeatherData> weatherPage = weatherDataRepository.findByDateBetween(today, sevenDaysLater, pageable);
         Page<Prediction> predictionPage = predictionRepository.findByPredictedDateBetween(today, sevenDaysLater, pageable);

@@ -21,4 +21,7 @@ public class PredictionModuleConfig{
 
     @Value("${open_weather.lon}")
     private Float openWeatherLongitude;
+
+    @Value("${prediction.future.days}")
+    private int predictionDays;
 }
