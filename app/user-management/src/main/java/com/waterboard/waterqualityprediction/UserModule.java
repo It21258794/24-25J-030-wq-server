@@ -47,6 +47,12 @@ public class UserModule {
         return userResultSet;
     }
 
+    public ResultSet<User> getUser(User user) {
+        Optional<User> optionalUser = this.userService.getUserById(user.getId());
+        ResultSet<User> userResultSet = new ResultSet<>(optionalUser.get());
+        return userResultSet;
+    }
+
     public ResultSet<User> userLogin(User loginDetails) {
         User user;
         try {
@@ -135,7 +141,15 @@ public class UserModule {
     }
 
     public ResultSet<User> changeUserStatus(String id, String status) {
-        User user = this.userService.changeUserPasswordByAdmin(id,status);
+        User user = this.userService.changeUserStatusByAdmin(id,status);
+        return new ResultSet<>(user);
+    }
+
+    public ResultSet<User> updateProfile(UserDto userDto) {
+        if(!Session.getUser().getEmail().equals(userDto.getEmail())) {
+            throw new UnauthorizeException("dont have permission to perform this operation");
+        }
+        User user = this.userService.updateProfile(userDto);
         return new ResultSet<>(user);
     }
 }

@@ -55,7 +55,7 @@ public class NotificationModuleControllerTest extends BaseTest {
                 .from(new Mail.MailAddress(fromName, fromName + "@mailinator.com"))
                 .to(Arrays.asList(new Mail.MailAddress(toName,"kaveeshalankeshwara2001@gmail.com")))
                 .subject("This is a sample email test")
-                .htmlTemplate(new Mail.HtmlTemplate("sample.html", properties))
+                .htmlTemplate(new Mail.HtmlTemplate("sample", properties))
                 .build();
 
         Response response = getDocumentedGiven("notification-system-send-mail")

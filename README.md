@@ -167,6 +167,28 @@ mvn spring-boot:run
 >- user create flow implemented with notification triggering
 >- new Exception add with hash code
 >- email templates add for newly created user
+>- 
+
+> [!TIP]
+> https://github.com/It21258794/24-25J-030-wq-server/pull/26
+> 
+> feat(water-quality-prediction): fast api integration with a get request to get prediction
+>- scada data stored in db implemented a cron to store predictions
+>- fix(user-management): search user api implemented with pagination
+create user , user status change, change current password apis implemented
+test cases added
+>- fix(notification-module): new email templates added for user activation flow
+>- updated git file
+
+> [!TIP]
+> https://github.com/It21258794/24-25J-030-wq-server/pull/27
+> 
+> feat(chemical-consumption): add ChemicalController class and required dependencies
+>- adjusted security configuration and did minor changes in chemical controller
+>- Added ChemicalController.java
+>- Implemented WebClient for HTTP requests
+>- Enabled CORS for frontend communication
+
 
 
 
