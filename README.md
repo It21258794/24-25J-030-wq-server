@@ -189,6 +189,14 @@ test cases added
 >- Implemented WebClient for HTTP requests
 >- Enabled CORS for frontend communication
 
+> [!TIP]
+> https://github.com/It21258794/24-25J-030-wq-server/pull/28
+> 
+> feat(flow-customization): implemented flow customization funcionality
+>- add jar test configuration flow
+>- add chemical mangement part for Test
+>- Implement a ml modle to predict step wise treated water quality
+
 
 
 
