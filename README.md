@@ -165,10 +165,10 @@ EC2 Instance Configuration
 
 ### Prerequisites:
 + Java Development Kit (JDK 17+)
-+ Python 3.8+
 + MySQL and MongoDB Database installed and configured.
 + Maven for building the Spring Boot project.
 + Docker for containerized deployment.
++ RabbitMQ
 
 
 ## INSTALLATION:
