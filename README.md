@@ -2,6 +2,25 @@
 
 This pilot project is a collaborative effort between the Water Board Sri Lanka and JRDC to develop and deploy a comprehensive water quality management system for the Meewathura Water Treatment Plant. The system integrates machine learning and deep learning models for predicting key water quality parameters and chemical consumption, and also forecasts step-wise treated water parameters. It supports real-time monitoring and visualization of sensor data through integration with the existing SCADA system. The goal is to improve water treatment efficiency and ensure proactive quality management of water sourced from the Mahaweli River.
 
+## Team Members
+
+- **Shiraz M.S** - `IT21277054`  
+  [![Email](https://img.shields.io/badge/Gmail-D14836?style=flat&logo=gmail&logoColor=white)](mailto:oshadhianjana@gmail.com)
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shamry-shiraz-0b80b21a9/)
+
+- **Karunasena H.G.M.K.K.L** - `IT21258794`  
+  [![Email](https://img.shields.io/badge/Gmail-D14836?style=flat&logo=gmail&logoColor=white)](mailto:kaveeshakarunasena@gmail.com)
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/kaveesha-karunasena/)
+
+- **Hansani K.J.M** - `IT21222672`  
+  [![Email](https://img.shields.io/badge/Gmail-D14836?style=flat&logo=gmail&logoColor=white)](mailto:hansanimu00@gmail.com)
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/hansani-mudelige-2a7776275)
+
+- **Kumarasinghe O.A.** - `IT21174308`  
+  [![Email](https://img.shields.io/badge/Gmail-D14836?style=flat&logo=gmail&logoColor=white)](mailto:oshadhianjana@gmail.com)
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/oshadhi-anjana-kumarasinghe-a784aa213/)
+
+
 ## Architecture diagram
 
 <img width="9428" alt="Water Quality Prediction - Conceptual Diagram (5)" src="https://github.com/user-attachments/assets/f3b49588-e581-4d94-acf9-8c139f9bae8b" />
