@@ -1,65 +1,141 @@
-# 24-25J-030-wq-server
+![image](https://github.com/user-attachments/assets/850ab1c6-60d1-4ad5-a135-6d8a38faa9ce)# 24-25J-030-wq-server
 
-This repository contains the backend implementation of the Water Quality Prediction and Management System, a collaborative project developed as part of the 4th-year university project in partnership with the Sri Lanka Water Board and JRDC. This backend serves as the backbone for user management, notifications, predictive modeling, sensor management, and system customization.
+This pilot project is a collaborative effort between the Water Board Sri Lanka and JRDC to develop and deploy a comprehensive water quality management system for the Meewathura Water Treatment Plant. The system integrates machine learning and deep learning models for predicting key water quality parameters and chemical consumption, and also forecasts step-wise treated water parameters. It supports real-time monitoring and visualization of sensor data through integration with the existing SCADA system. The goal is to improve water treatment efficiency and ensure proactive quality management of water sourced from the Mahaweli River.
 
 ## Architecture diagram
 
-![wq-architecture](https://github.com/user-attachments/assets/5312f2c2-bf94-4422-b6da-4f80c98c3614)
+<img width="9428" alt="Water Quality Prediction - Conceptual Diagram (5)" src="https://github.com/user-attachments/assets/f3b49588-e581-4d94-acf9-8c139f9bae8b" />
 
 
-
-## Features
+## 1.  FEATUERS
 The backend system includes the following key features:
 
 ### 1. User Management:
 
 + User authentication and authorization.
-+ Role-based access control for different system stakeholders.
++ Role-based access control for different system stakeholders. (Admin/User)
 
 
 ### 2. Notification System:
 
 + Real-time alerts based on water quality predictions.
 + Configurable notification settings for various user roles.
++ SMTP Gmail service
++ Twillio message service
 
 
 ### 3. Water Quality Prediction Model:
 
 + Integrated with Python-based predictive models.
++ Hybrid DL model using LSTM and GNN
 + Uses historical and real-time sensor data to predict key water quality parameters.
++ Historical data provides by JRDC
++ Thsi will provise max 30 days predictions for PH, Turbidity, Conductivity
++ External Weather Api use.
 
 
-### 4. Flow Customization:
+### 4. Flow Customization and Step wise Treated water quality prediction:
 
 + Modular configuration for customizing system workflows and thresholds.
++ Step wise treated water quality parameter prediction through out the treatement process
 
 
 ### 5. Sensor Management:
 
 + Plug-and-play support for adding or managing IoT sensors.
 + Data ingestion and processing pipelines.
++ Loacl SCADA system integration through a python script
 
 
 ### 6. Chemical Consumption Prediction Model:
 
-+ Predictive analysis for estimating chemical requirements for water treatment.
++ Predictive analysis for estimating chemical requirements for water treatment process.
++ Use treated water historical data provides by JRDC
++ External Weather Api use.
+
+## 2.  MULTI-MODULE ARCHITECTURE
+The backend application was structured using Spring Boot’s multi-module setup, which included:
+
+
++ Main Application: Application Entrypoint with all initializations.
++ Core Module: Contains shared business logic and utilities.
++ Common Module: Exposes REST endpoints for frontend and external integrations.
++ Analytics Module : Handle all the statistcis iin the project 
++	Chlorine Cunsumption Module: Logic for communicating with respective ML/DL model container.
++	Water Quality Prediction Module : Logic for communicating with respective ML/DL model container.
++	Flow Customization Module: Handles Logic for communicating with respective ML/DL model container and treatment process configuration.
++	Sensor Management Module : : Handles real-time data intake from SCADA systems.
++	Notification Module: Manages integration with Twilio (SMS) and Gmail SMTP (Email).
++	Security Module: Handles JWT-based authentication and authorization.
++	User Management Module : Hnadles uses within the system
+
+
+## 3. SOFTWARE SPECIFICATIONS
+
+| Component              | Technology Used         | Purpose                                          |
+|------------------------|--------------------------|--------------------------------------------------|
+| Frontend               | React.js                 | Dashboard and visualization                      |
+| Backend                | Spring Boot (Multi-module) | User management, ML model integration, notifications |
+| Machine Learning Services | Python (FastAPI / FlaskAPI) | Predictions                                      |
+| Database 1             | MongoDB Atlas            | Sensor and prediction data storage               |
+| Database 2             | MySQL                    | Structured transactional data                    |
+| Authentication         | JWT                      | Secure access control                            |
+| Notification - SMS     | Twilio                   | Sending SMS alerts                               |
+| Notification - Email   | Gmail SMTP               | Sending email alerts                             |
+| Weather API            | OpenWeather              | API External input for predictions               |
+| Message Broker         | RabbitMQ (CloudAMQP)     | Async communication for tasks                    |
 
 
 
-## Tech Stack
+## 4. TOOLS AND VERSIONS
+
+| Tool/Service              | Version / Type           | Purpose                                                |
+|---------------------------|---------------------------|--------------------------------------------------------|
+| Java (OpenJDK)            | 17                        | Backend runtime environment for Spring Boot application|
+| Spring Boot               | 3.4.0                     | Backend framework                                      |
+| Maven                     | 3.8.1                     | Build automation and dependency management tool        |
+| RestAssured               | -                         | Automated API testing                                  |
+| MongoDB Atlas             | 8.0.9                     | NoSQL cloud DB                                         |
+| MySQL                     | 9.0.1                     | SQL data storage                                       |
+| Docker                    | 4.37.1                    | Containerization                                       |
+| AWS EC2                   | t2.medium (us-west-2)     | Application hosting                                    |
+| AWS S3                    | -                         | Store secured config files                             |
+| AWS Secrets Manager       | -                         | Manage secrets/credentials                             |
+| CloudWatch                | -                         | Logging and monitoring                                 |
+| RabbitMQ (CloudAMQP)      | -                         | Queue service                                          |
+
+
+## 5.TECH STACK
 
 ### Backend Frameworks and Languages:
 + Spring Boot: Backend API development using a modular architecture.
-+ Python: For predictive models (e.g., water quality and chemical consumption).
++ Java : 17
 
 ### Database:
-+ MySQL: To store and manage system data.
-
-### Architecture:
-+ Multi-Module Architecture: Enables separation of concerns and easy scalability.
++ MySQL: To store and manage user related data.
++ MongoDB : to store prediction data
 
 ### Deployment:
-+ Hosted on Hostinger with Dockerized microservices.
+The system is hosted on AWS EC2 instances in the us-west-2 region, configured with:
+EC2 Instance Configuration
++	Region: us-west-2
++	Instance Type: t2.medium
++	OS: Amazon Linux 2
++	VPC/Subnet: Configured with route tables
++	Security Groups: Controlled access on ports 80, 443, 22, 8000
++	IAM Roles: Limited access using least privilege
++	S3 Access: Configured via IAM policies for reading env files
+
++	AWS ARCHITECTURE DIAGRAM
+
+  <img width="10385" alt="Untitled (1)" src="https://github.com/user-attachments/assets/edb6ad37-32c4-4daa-afe5-5c539dde260a" />
+
+
+
+## 6. LINKED GIT REPOSITORIES
++ Frontend : https://github.com/It21258794/It21258794-24-25J-030-wq-web
++ Water Quality Prediction Model (FastApi) - https://github.com/It21258794/water-quality-prediction-service
++ Step wise prediction (FlaskApi) - https://github.com/IT21174308/24-25J-030-wq-model.git
 
 
 ## Getting Started
@@ -67,12 +143,12 @@ The backend system includes the following key features:
 ### Prerequisites:
 + Java Development Kit (JDK 17+)
 + Python 3.8+
-+ MySQL Database installed and configured.
++ MySQL and MongoDB Database installed and configured.
 + Maven for building the Spring Boot project.
 + Docker for containerized deployment.
 
 
-## Installation:
+## INSTALLATION:
 
 ### 1. Clone the Repository:
 ```bash
@@ -86,13 +162,9 @@ Create a database named water_quality.
 
 Run the SQL scripts located in /db-scripts to set up the schema and initial data.
 
-### 3. Install Python Dependencies:
+### 3. Set up MySQL Database:
 
-Navigate to the /python-models directory and install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
+run rabbitMQ locally
 
 ### 4. Configure Environment:
 
@@ -106,7 +178,7 @@ mvn clean install
 mvn spring-boot:run 
 ```
 
-## Pull Requests
+## PULL REQUESTS
 
 > [!TIP]
 >https://github.com/It21258794/24-25J-030-wq-server/pull/1
