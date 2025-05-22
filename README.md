@@ -91,18 +91,19 @@ The backend application was structured using Spring Boot’s multi-module setup,
 
 ## 3. SOFTWARE SPECIFICATIONS
 
-| Component              | Technology Used         | Purpose                                          |
-|------------------------|--------------------------|--------------------------------------------------|
-| Frontend               | React.js                 | Dashboard and visualization                      |
-| Backend                | Spring Boot (Multi-module) | User management, ML model integration, notifications |
-| Machine Learning Services | Python (FastAPI / FlaskAPI) | Predictions                                      |
-| Database 1             | MongoDB Atlas            | Sensor and prediction data storage               |
-| Database 2             | MySQL                    | Structured transactional data                    |
-| Authentication         | JWT                      | Secure access control                            |
-| Notification - SMS     | Twilio                   | Sending SMS alerts                               |
-| Notification - Email   | Gmail SMTP               | Sending email alerts                             |
-| Weather API            | OpenWeather              | API External input for predictions               |
-| Message Broker         | RabbitMQ (CloudAMQP)     | Async communication for tasks                    |
+| Component               | Technology Used            | Purpose                                         |
+|-------------------------|----------------------------|-------------------------------------------------|
+| Frontend                | React.js                   | Dashboard and visualization                     |
+| Backend                 | Spring Boot (Multi-module) | User management, ML model integration, notifications |
+| Machine Learning Services | Python (FastAPI / FlaskAPI) | Predictions                                  |
+| Database 1              | MongoDB Atlas              | Sensor and prediction data storage              |
+| Database 2              | MySQL                      | Structured transactional data                   |
+| Authentication          | JWT                        | Secure access control                           |
+| Notification - SMS      | Twilio                     | Sending SMS alerts                              |
+| Notification - Email    | Gmail SMTP                 | Sending email alerts                            |
+| Email Templating        | Thymeleaf (HTML)           | Designing dynamic email templates               |
+| Weather API             | OpenWeather                | API external input for predictions              |
+| Message Broker          | RabbitMQ (CloudAMQP)       | Async communication for tasks                   |
 
 
 
@@ -122,6 +123,8 @@ The backend application was structured using Spring Boot’s multi-module setup,
 | AWS Secrets Manager       | -                         | Manage secrets/credentials                             |
 | CloudWatch                | -                         | Logging and monitoring                                 |
 | RabbitMQ (CloudAMQP)      | -                         | Queue service                                          |
+| Thymeleaf                 | 3.4.0                     | Create dynamic HTML email templates             |
+
 
 
 ## 5.TECH STACK
@@ -129,6 +132,7 @@ The backend application was structured using Spring Boot’s multi-module setup,
 ### Backend Frameworks and Languages:
 + Spring Boot: Backend API development using a modular architecture.
 + Java : 17
++ Thymeleaf : For email template design
 
 ### Database:
 + MySQL: To store and manage user related data.
