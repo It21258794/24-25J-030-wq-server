@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/850ab1c6-60d1-4ad5-a135-6d8a38faa9ce)# 24-25J-030-wq-server
+# 24-25J-030-wq-server
 
 This pilot project is a collaborative effort between the Water Board Sri Lanka and JRDC to develop and deploy a comprehensive water quality management system for the Meewathura Water Treatment Plant. The system integrates machine learning and deep learning models for predicting key water quality parameters and chemical consumption, and also forecasts step-wise treated water parameters. It supports real-time monitoring and visualization of sensor data through integration with the existing SCADA system. The goal is to improve water treatment efficiency and ensure proactive quality management of water sourced from the Mahaweli River.
 
