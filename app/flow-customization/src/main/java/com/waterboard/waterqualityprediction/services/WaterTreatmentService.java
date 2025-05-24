@@ -15,7 +15,7 @@ public class WaterTreatmentService {
 
     private static final Logger logger = LoggerFactory.getLogger(WaterTreatmentService.class);
     private final RestTemplate restTemplate;
-    private final String flaskApiUrl = "http://localhost:5000/predict";
+    private final String flaskApiUrl = "http://13.53.192.110:5000/predict";
 
     public WaterTreatmentService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
