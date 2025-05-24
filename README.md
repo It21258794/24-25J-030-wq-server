@@ -297,3 +297,5 @@ test cases added
 
 
 
+- **[#33](https://github.com/It21258794/24-25J-030-wq-server/pull/33)**: add deployed model to predict last stage values.
+  - Description: Change chemical controller and add deployed model to predict last stage values.
