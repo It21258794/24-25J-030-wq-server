@@ -12,7 +12,7 @@ import java.util.Map;
 @RequestMapping()
 public class ChemicalController {
 
-    private final WebClient webClient = WebClient.create("http://localhost:5000");
+    private final WebClient webClient = WebClient.create("http://51.21.196.245:5000");
 
     @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping("/predict")
