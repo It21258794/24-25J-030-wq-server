@@ -297,3 +297,5 @@ test cases added
 
 
 
+- **[#36](https://github.com/It21258794/24-25J-030-wq-server/pull/36)**: Added deployed url to controller class
+  - Description: 
