@@ -297,3 +297,5 @@ test cases added
 
 
 
+- **[#37](https://github.com/It21258794/24-25J-030-wq-server/pull/37)**: fix(sensor-management): updated modbus IP
+  - Description: - Updated MODBUS_IP 
