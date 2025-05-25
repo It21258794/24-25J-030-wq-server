@@ -22,7 +22,7 @@ import java.util.Map;
 @Slf4j
 public class DashboardService {
 
-    private static final String MODBUS_IP = "127.0.0.1";
+    private static final String MODBUS_IP = "34.218.209.76";
     private static final int MODBUS_PORT = 5020;
 
     private static final Map<Integer, Integer> TAG_ID_TO_REGISTER = Map.of(
